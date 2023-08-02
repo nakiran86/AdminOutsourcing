@@ -1050,6 +1050,28 @@ class AdminOutsourcing extends Controller {
         }
     }
 
+    private function _getQuantityAfterPo($poId) {
+        $productPOList = $this->model->getPOProductsList('tbl_po_product.`po_id` = ' . $poId);
+        $productIdPOList = array_unique(array_column($productPOList, 'item_id'));
+        $allProductOrdered = $this->model->getListCheckAutoOrder('tbl_product_order.`status` IN ("APPROVED","PROCESSING","CANCELING") AND tbl_product_order.product_id IN ("' . implode('","', $productIdPOList) . '")');
+        $allProductOutSourceOrder = $this->model->getListOutSourceOrder(' AND tbl_outsourcing_product.product_id IN ("' . implode('","', $productIdPOList) . '")');
+        $productPOPendingList = $this->model->getPOProPendingList(' AND tbl_po_product.item_id IN ("' . implode('","', $productIdPOList) . '")');
+        foreach ($productPOList as $kPro => $vPro) {
+            if (!isset($allProductOrdered[$vPro['item_id']])) {
+                $allProductOrdered[$vPro['item_id']]['total_quantity'] = 0;
+            }
+            if (!isset($allProductOutSourceOrder[$vPro['item_id']])) {
+                $allProductOutSourceOrder[$vPro['item_id']]['total_quantity'] = 0;
+            }
+            if (!isset($productPOPendingList[$vPro['item_id']])) {
+                $productPOPendingList[$vPro['item_id']]['delivery_quantity_pending'] = 0;
+            }
+            $field_qty_check = $this->getDefaultProductQuantityField($vPro['stock']);
+            $poProList[$vPro['item_id']]['quantity_after_po'] = Systems::displayFloatNumber($this->_allProduct[$vPro['item_id']][$field_qty_check] + $allProductOrdered[$vPro['item_id']]['total_quantity'] + $allProductOutSourceOrder[$vPro['item_id']]['total_quantity'] - $productPOPendingList[$vPro['item_id']]['delivery_quantity_pending']);
+        }
+        return $poProList;
+    }
+
     /**
      *
      */
@@ -1079,6 +1101,9 @@ class AdminOutsourcing extends Controller {
                     $proMaterialEditList = $data['material_edit_list'];
                     $proMaterialNewList = $data['material_new_list'];
                     $customerInfo = $this->model->selectTable('tbl_customer', 'tbl_customer.id = "' . $data['customer_id'] . '"');
+
+                    $poProList = $this->_getQuantityAfterPo($curItem['po_id']);
+
                     if (is_numeric($data['customer_id']) && $customerInfo[$data['customer_id']]['name'] == $data['customer_name'] && $customerInfo[$data['customer_id']]['code'] == $data['customer_code']) {
                         if ($proList || $proNewList) {
                             $errors = '';
@@ -1102,6 +1127,10 @@ class AdminOutsourcing extends Controller {
                             if ($proList) {
                                 $arrMaterialPriceList = array();
                                 foreach ($proList as $key => $product) {
+                                    if ($poProList[$product['real_id']]['quantity_after_po'] < 0) {
+                                        $errors .= '<li><span>26. ' . $this->view->renderLabel('quantity_after_po') . ' < 0</span></li>';
+                                        $flagCheck = FALSE;
+                                    }
                                     $arrProductIdList[$product['real_id']] = $product['real_id'];
                                     $arrMaterialPriceList[$key] = 0;
                                     if ($product['real_quantity'] > 0) {
@@ -1566,8 +1595,11 @@ class AdminOutsourcing extends Controller {
             $strLogAdd .= " - Action: DELETE\n";
             $strLogAdd .= ' - User: ' . Session::get('user_fullname') . ' - ' . Session::get('user_id') . "\n";
             if ($canDelete) {
+                $poProList = $this->_getQuantityAfterPo($currentItem['po_id']);
                 foreach ($proList as $pValue) {
-                    $this->model->editSave('tbl_outsourcing_product', array('id' => $pValue['id'], 'status' => 'DELETED', 'log' => $pValue['log'] . $strLogAdd));
+                    if ($poProList[$pValue['product_id']]['quantity_after_po'] >= 0) {
+                        $this->model->editSave('tbl_outsourcing_product', array('id' => $pValue['id'], 'status' => 'DELETED', 'log' => $pValue['log'] . $strLogAdd));
+                    }
                 }
                 $itemConfirm = $currentItem['log'] . $strLogAdd;
                 $this->model->editSave('tbl_outsourcing', array('id' => $id, 'status' => 'DELETED', 'log' => $itemConfirm));

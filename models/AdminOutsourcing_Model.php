@@ -545,4 +545,51 @@ class AdminOutsourcing_Model extends Model {
         ');
     }
 
+    /**
+     * Summary of getPOProductsList
+     * @param mixed $cond
+     * @return mixed
+     */
+    public function getPOProductsList($cond) {
+        return $this->db->selectAll('
+            SELECT
+                tbl_po_product.id,
+                tbl_po_product.po_id,
+                tbl_po_product.date_po_product,
+                tbl_po_product.date_tax,
+                tbl_po_product.product_id,
+                tbl_po_product.product_code,
+                tbl_po_product.product_name,
+                tbl_po_product.product_specs,
+                tbl_po_product.product_unit,
+                tbl_po_product.product_quantity,
+                tbl_po_product.product_delivery_quantity,
+                tbl_po_product.product_merge_quantity,
+                tbl_po_product.product_price,
+                tbl_po_product.item_id,
+                tbl_po_product.item_code,
+                tbl_po_product.item_name,
+                tbl_po_product.item_specs,
+                tbl_po_product.item_unit,
+                tbl_po_product.item_quantity,
+                tbl_po_product.item_delivery_quantity,
+                tbl_po_product.item_merge_quantity,
+                tbl_po_product.item_price,
+                tbl_po_product.vat_quantity,
+                tbl_po_product.vat_price,
+                tbl_po_product.product_vat_id,
+                tbl_po_product.bill_sheets_quantity,
+                tbl_po_product.real_sheets_quantity,
+                tbl_po_product.stock,
+                tbl_po_product.`status`,
+                tbl_po_product.note AS product_note
+            FROM
+                tbl_po_product
+            WHERE
+                ' . $cond . '
+            ORDER BY
+                tbl_po_product.item_name ASC
+            ');
+    }
+
 }

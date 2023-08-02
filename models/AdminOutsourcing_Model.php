@@ -12,7 +12,7 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function getList($cond, $start = 0, $pagesize = 50) {
         return $this->db->selectAll('
@@ -42,13 +42,13 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function getTotalRecord($cond) {
         return $this->db->selectOne('
             SELECT
                 COUNT(DISTINCT(tbl_outsourcing.id)) AS total_record
-            FROM 
+            FROM
                 tbl_outsourcing INNER JOIN tbl_outsourcing_product ON tbl_outsourcing.id = tbl_outsourcing_product.outsourcing_id
             WHERE
                 `tbl_outsourcing`.`status` != "DELETED" AND tbl_outsourcing_product.`status` != "DELETED"' . $cond . '
@@ -57,7 +57,7 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function itemSingleList($id, $extra_cond = '') {
         return $this->db->selectOne('
@@ -89,7 +89,7 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function productOutsourceList($id, $extra_cond = '') {
         return $this->db->selectAll('
@@ -116,7 +116,7 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function getUserList($cond = '') {
         return $this->db->selectAll('
@@ -137,7 +137,7 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function getStockOutByOutsource($outId, $extra_cond = '') {
         return $this->db->selectAll('
@@ -159,7 +159,7 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function proSOList($id, $extra_cond = '') {
         return $this->db->selectAll('
@@ -181,7 +181,7 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function getReturnedByOutsource($sOutId, $extra_cond = '') {
         return $this->db->selectAll('
@@ -204,7 +204,7 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function proReturnList($id, $extra_cond = '') {
         return $this->db->selectAll('
@@ -228,21 +228,21 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function selectTable($table, $cond) {
         return $this->db->selectTable($table, $table . '.status != "DELETED" AND ' . $cond);
     }
 
     /**
-     * 
+     *
      */
     public function create($table, $data) {
         return $this->db->insert($table, $data);
     }
 
     /**
-     * 
+     *
      */
     public function productMaterialList($id, $extra_cond = '') {
         return $this->db->selectAll('
@@ -266,7 +266,7 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function checkMaterialList($id, $extra_cond = '') {
         return $this->db->selectAll('
@@ -281,7 +281,7 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function checkStockoutMaterialList($id, $extra_cond = '') {
         return $this->db->selectAll('
@@ -298,7 +298,7 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function checkReturnMaterialList($id, $extra_cond = '') {
         return $this->db->selectAll('
@@ -315,7 +315,7 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function getArrLocalStockOutIdList($outId, $extra_cond = '') {
         return $this->db->selectAll('
@@ -329,7 +329,7 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function getEndImportedList($cond = '') {
         return $this->db->selectAll('
@@ -347,7 +347,7 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function updateEndImportedPrice($data) {
         $strSQL = 'UPDATE `tbl_end_product` SET `hire_price` = ' . $data['hire_price_update'] . ', `price` = ' . $data['price_update'] . ', `log`=CONCAT(COALESCE(`log`,""),"' . $data['log_add'] . '") WHERE `outsourcing_product_id` = "' . $data['outsourcing_product_id'] . '" AND `status` != "DELETED";';
@@ -355,7 +355,7 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function getListStatistic($cond, $start = 0, $pagesize = 50) {
         return $this->db->selectAll('
@@ -380,13 +380,13 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function getTotalStatisticRecord($cond) {
         return $this->db->selectOne('
             SELECT
                 COUNT(DISTINCT(tbl_stockout_local_product.item_id)) AS total_record
-            FROM 
+            FROM
                 (tbl_outsourcing INNER JOIN tbl_stockout_local ON tbl_outsourcing.id = tbl_stockout_local.outsourcing_id) INNER JOIN tbl_stockout_local_product ON tbl_stockout_local.id = tbl_stockout_local_product.stock_out_id
             WHERE
                 tbl_stockout_local.datatype = "TRANSFER" AND tbl_stockout_local.`status` IN ("DELIVERED","FINISHED") AND tbl_stockout_local.outsourcing_id != "0" ' . $cond . '
@@ -396,7 +396,7 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function getListOutsourceByProductId($cond) {
         return $this->db->selectAll('
@@ -412,7 +412,7 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function getListQuantityProduction($extra_cond = '') {
         return $this->db->selectAll('
@@ -429,7 +429,7 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function getListStatisticReturnList($extra_cond = '') {
         return $this->db->selectAll('
@@ -446,7 +446,7 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function getListLocalStockOutId($extra_cond = '') {
         return $this->db->selectAll('
@@ -460,7 +460,7 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function getListDetailOutsourceList($cond) {
         return $this->db->selectAll('
@@ -479,7 +479,7 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function getListDetailProductionList($extra_cond = '') {
         return $this->db->selectAll('
@@ -490,13 +490,13 @@ class AdminOutsourcing_Model extends Model {
                 (tbl_outsourcing INNER JOIN tbl_outsourcing_product ON tbl_outsourcing.id = tbl_outsourcing_product.outsourcing_id) INNER JOIN tbl_processed_materials ON tbl_outsourcing_product.id = tbl_processed_materials.outsourcing_product_id
             WHERE
                 tbl_processed_materials.`status` != "DELETED" AND tbl_outsourcing_product.`status` != "DELETED" ' . $extra_cond . '
-            GROUP BY 
+            GROUP BY
                 tbl_outsourcing.id
         ');
     }
 
     /**
-     * 
+     *
      */
     public function getListDetailStockoutList($cond) {
         return $this->db->selectAll('
@@ -513,7 +513,7 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function getListDetailReturnedList($extra_cond = '') {
         return $this->db->selectAll('
@@ -530,7 +530,7 @@ class AdminOutsourcing_Model extends Model {
     }
 
     /**
-     * 
+     *
      */
     public function getProductNormsInfo($cond = '') {
         return $this->db->selectAll('

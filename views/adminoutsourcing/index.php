@@ -1,31 +1,33 @@
 <script type="text/javascript">
-$(document).ready(function(){
-    $('a#showAdvanceSearch').click(function(){
-        $('input#from_date').datepicker({dateFormat: 'dd/mm/yy', changeMonth: true, changeYear: true,
-            onClose: function( selectedDate ) {
-                $("#to_date").datepicker( "option", "minDate", selectedDate);
-            }
-        });
-        $('input#to_date').datepicker({dateFormat: 'dd/mm/yy', changeMonth: true, changeYear: true,
-            onClose: function( selectedDate ) {
-                $("#from_date").datepicker("option", "maxDate", selectedDate);
-            }
-        });
-        $("#advance-search").dialog({
-            height: 410,
-            width: 500,
-            modal: true,
-            show: {
-                effect: "blind",
-                duration: 1000
-            },
-            hide: {
-                effect: "explode",
-                duration: 1000
-            }
+    $(document).ready(function() {
+        $('a#showAdvanceSearch').click(function() {
+            $('input#from_date').datepicker({
+                dateFormat: 'dd/mm/yy', changeMonth: true, changeYear: true,
+                onClose: function(selectedDate) {
+                    $("#to_date").datepicker("option", "minDate", selectedDate);
+                }
+            });
+            $('input#to_date').datepicker({
+                dateFormat: 'dd/mm/yy', changeMonth: true, changeYear: true,
+                onClose: function(selectedDate) {
+                    $("#from_date").datepicker("option", "maxDate", selectedDate);
+                }
+            });
+            $("#advance-search").dialog({
+                height: 410,
+                width: 500,
+                modal: true,
+                show: {
+                    effect: "blind",
+                    duration: 1000
+                },
+                hide: {
+                    effect: "explode",
+                    duration: 1000
+                }
+            });
         });
     });
-});
 </script>
 <div class="content-wrapper">
     <div class="path">
@@ -37,7 +39,7 @@ $(document).ready(function(){
     <div class="subMenuBox">
         <ul class="submenu">
             <?php foreach ($this->subMenuList as $subMenu) { ?>
-            <li><a href="<?php echo $subMenu['url']; ?>"<?php echo (Link::getUrl() == urlencode($subMenu['url']) ? ' class="active"' : '') ?>><?php echo $subMenu['name'];?></a></li>
+                <li><a href="<?php echo $subMenu['url']; ?>" <?php echo (Link::getUrl() == urlencode($subMenu['url']) ? ' class="active"' : '') ?>><?php echo $subMenu['name']; ?></a></li>
             <?php } ?>
         </ul>
     </div>
@@ -51,21 +53,24 @@ $(document).ready(function(){
                 <tbody>
                     <tr>
                         <?php if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'add')) { ?>
-                        <td align="center">
-                            <a href="<?php echo Link::createAdmin_current(array('cmd' => 'add')); ?>" class="toolbar" title="{{.add_new.}}"><span class="icon-button Icon-32-Add" title="{{.add_new.}}"></span>{{.add_new.}}</a>
-                        </td>
-                        <?php } if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'edit')) { ?>
-                        <td align="center">
-                            <a href="javascript:void(0);" class="toolbar" title="{{.finish_order.}}" onclick="confirmCheckAction('frmAdminItemsList', 'finishListOrder', '{{.are_you_sure_want_to_finish_the_selected_items.}}');"><span class="icon-button Icon-32-Finish" title="{{.finish_order.}}"></span>{{.finish.}}</a>
-                        </td>
-                        <?php } if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'admin')) { ?>
-                        <td align="center">
-                            <a href="<?php echo Link::createAdmin_current(array('cmd' => 'statistic')); ?>" class="toolbar" title="{{.statistic.}}"><span class="icon-button Icon-32-Statistic" title="{{.statistic.}}"></span>{{.statistic.}}</a>
-                        </td>
-                        <?php } if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'approved')) { ?>
-                        <td align="center">
-                            <a href="javascript:void(0);" class="toolbar" title="{{.approved.}} {{.edit.}}" onclick="confirmCheckAction('frmAdminItemsList', 'approvelistedit', '{{.are_you_sure_want_to_approve_the_selected_items.}}');"><span class="icon-button Icon-32-Approve" title="{{.approved.}} {{.edit.}}"></span>{{.approved.}} {{.edit.}}</a>
-                        </td>
+                            <td align="center">
+                                <a href="<?php echo Link::createAdmin_current(array('cmd' => 'add')); ?>" class="toolbar" title="{{.add_new.}}"><span class="icon-button Icon-32-Add" title="{{.add_new.}}"></span>{{.add_new.}}</a>
+                            </td>
+                        <?php }
+                        if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'edit')) { ?>
+                            <td align="center">
+                                <a href="javascript:void(0);" class="toolbar" title="{{.finish_order.}}" onclick="confirmCheckAction('frmAdminItemsList', 'finishListOrder', '{{.are_you_sure_want_to_finish_the_selected_items.}}');"><span class="icon-button Icon-32-Finish" title="{{.finish_order.}}"></span>{{.finish.}}</a>
+                            </td>
+                        <?php }
+                        if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'admin')) { ?>
+                            <td align="center">
+                                <a href="<?php echo Link::createAdmin_current(array('cmd' => 'statistic')); ?>" class="toolbar" title="{{.statistic.}}"><span class="icon-button Icon-32-Statistic" title="{{.statistic.}}"></span>{{.statistic.}}</a>
+                            </td>
+                        <?php }
+                        if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'approved')) { ?>
+                            <td align="center">
+                                <a href="javascript:void(0);" class="toolbar" title="{{.approved.}} {{.edit.}}" onclick="confirmCheckAction('frmAdminItemsList', 'approvelistedit', '{{.are_you_sure_want_to_approve_the_selected_items.}}');"><span class="icon-button Icon-32-Approve" title="{{.approved.}} {{.edit.}}"></span>{{.approved.}} {{.edit.}}</a>
+                            </td>
                         <?php } ?>
                     </tr>
                 </tbody>
@@ -79,19 +84,20 @@ $(document).ready(function(){
                     <td>{{.total.}}: <font color="Brown"><span><?php echo $this->totalRecord; ?></span></font> {{.record.}} / <?php echo $this->totalPage; ?> {{.page.}}</td>
                     <td style="vertical-align: middle; padding-top: 0;" align="right">
                         <form name="frmSearch" id="frmSearch" action="" method="get">
-                            <input name="page" type="hidden" id="page" value="<?php echo Link::get('page');?>" />
+                            <input name="page" type="hidden" id="page" value="<?php echo Link::get('page'); ?>" />
                             {{.keyword.}}
                             <input type="text" class="TextInput" id="txtFindData" name="txtFindData" />
                             {{.sales_name.}}
                             <select id="cbUser" name="cbUser">
                                 <option value="">-</option>
                                 <?php if ($this->grant->check_privilege('MOD_PUBLICCUSTOMER', 'view')) { ?>
-                                <option value="ALL">{{.public_customer.}}</option>
-                                <?php } foreach ($this->salesUserList as $salesUser) { ?>
-                                <option value="<?php echo $salesUser['username'];?>"><?php echo $salesUser['fullname'];?></option>
+                                    <option value="ALL">{{.public_customer.}}</option>
+                                <?php }
+                                foreach ($this->salesUserList as $salesUser) { ?>
+                                    <option value="<?php echo $salesUser['username']; ?>"><?php echo $salesUser['fullname']; ?></option>
                                 <?php } ?>
                             </select>
-                            <script type="text/javascript">$('select#cbUser').val('<?php echo Link::get('cbUser');?>');</script>
+                            <script type="text/javascript">$('select#cbUser').val('<?php echo Link::get('cbUser'); ?>');</script>
                             <input type="submit" class="Button" id="btnFind" value="{{.search.}}" name="btnFind" />
                             <input type="button" class="Button" id="btnRemoveFilter" value="{{.remove_filter.}}" name="btnRemoveFilter" onclick="javascript:window.location.href='<?php echo Link::createAdmin_current(); ?>';" />
                             <a href="javascript:void(0);" id="showAdvanceSearch">{{.advance_search.}}</a>
@@ -103,8 +109,8 @@ $(document).ready(function(){
         <div id="advance-search">
             <div class="advance-search-title">{{.advance_search.}}</div>
             <form name="frmAdvanceSearch" id="frmAdvanceSearch" method="get" action="">
-                <input name="page" type="hidden" id="page" value="<?php echo Link::get('page');?>" />
-                <input name="view" type="hidden" id="view" value="<?php echo Link::get('view');?>" />
+                <input name="page" type="hidden" id="page" value="<?php echo Link::get('page'); ?>" />
+                <input name="view" type="hidden" id="view" value="<?php echo Link::get('view'); ?>" />
                 <table cellspacing="1" cellpadding="4" class="admintable search" align="center">
                     <tbody>
                         <tr>
@@ -165,9 +171,10 @@ $(document).ready(function(){
                                 <select id="cbUser" name="cbUser">
                                     <option value="">-</option>
                                     <?php if ($this->grant->check_privilege('MOD_PUBLICCUSTOMER', 'view')) { ?>
-                                    <option value="ALL">{{.public_customer.}}</option>
-                                    <?php } foreach ($this->salesUserList as $salesUser) { ?>
-                                    <option value="<?php echo $salesUser['username'];?>"><?php echo $salesUser['fullname'];?></option>
+                                        <option value="ALL">{{.public_customer.}}</option>
+                                    <?php }
+                                    foreach ($this->salesUserList as $salesUser) { ?>
+                                        <option value="<?php echo $salesUser['username']; ?>"><?php echo $salesUser['fullname']; ?></option>
                                     <?php } ?>
                                 </select>
                             </td>
@@ -178,15 +185,16 @@ $(document).ready(function(){
                                 <select id="accountant" name="accountant">
                                     <option value="">-</option>
                                     <?php foreach ($this->accountantUserList as $accountUser) { ?>
-                                    <option value="<?php echo $accountUser['username'];?>"><?php echo $accountUser['fullname'];?></option>
+                                        <option value="<?php echo $accountUser['username']; ?>"><?php echo $accountUser['fullname']; ?></option>
                                     <?php } ?>
                                 </select>
                             </td>
                         </tr>
                         <tr>
-                          <td>&nbsp;</td>
-                          <td><input type="submit" name="btnSearch" id="btnSearch" value="{{.search.}}" />
-                          <input type="reset" name="btnReset" id="btnReset" value="{{.reset.}}" /></td>
+                            <td>&nbsp;</td>
+                            <td><input type="submit" name="btnSearch" id="btnSearch" value="{{.search.}}" />
+                                <input type="reset" name="btnReset" id="btnReset" value="{{.reset.}}" />
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -198,7 +206,7 @@ $(document).ready(function(){
                     <td><?php echo ($this->pagingList ? $this->pagingList : ''); ?></td>
                     <td style="vertical-align: middle; padding-top: 0;" align="right">
                         {{.show.}}
-                        <select id="cbItemPerPage" onchange="javascript:window.location.href='<?php echo Link::createAll(array('pagesize'),array(),false);?>&pagesize='+this.value;" name="cbItemPerPage">
+                        <select id="cbItemPerPage" onchange="javascript:window.location.href='<?php echo Link::createAll(array('pagesize'), array(), false); ?>&pagesize='+this.value;" name="cbItemPerPage">
                             <option value="10">10</option>
                             <option value="20">20</option>
                             <option value="50" selected="selected">50</option>
@@ -208,7 +216,7 @@ $(document).ready(function(){
                         </select>
                         {{.record.}} / {{.page.}}
                         <?php if (Link::get('pagesize')) { ?>
-                        <script type="text/javascript">$('select#cbItemPerPage').val('<?php echo Link::get('pagesize');?>');</script>
+                            <script type="text/javascript">$('select#cbItemPerPage').val('<?php echo Link::get('pagesize'); ?>');</script>
                         <?php } ?>
                     </td>
                 </tr>
@@ -238,35 +246,40 @@ $(document).ready(function(){
                         <?php
                         $i = 1;
                         foreach ($this->itemList as $key => $value) { ?>
-                        <tr class="<?php echo ($i % 2 == 1 ? 'row0' : 'row1'). ' ' . strtolower($value['status']); ?>">
-                            <td align="right"><?php echo $i; ?></td>
-                            <td align="center"><input type="checkbox" name="chkid[]" value="<?php echo $value['id']; ?>" /></td>
-                            <td align="center"><?php echo $value['create_time']; ?></td>
-                            <td align="center"><?php echo $value['date_out']; ?></td>
-                            <td align="center"><?php echo Systems::displayVnDate($value['expired_date']); ?></td>
-                            <td align="center"><?php echo Systems::displayVnDate($value['time_finished']); ?></td>
-                            <td align="center"><?php echo $value['outsource_number']; ?></td>
-                            <td align="center"><?php echo $value['customer_code']; ?></td>
-                            <td>
-                                <?php if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'view')) { ?>
-                                <a href="<?php echo Link::createAdmin_current(array('cmd' => 'view', 'id' => $value['id'])); ?>" title="{{.view_detail.}}"><?php echo $value['customer_name']; ?></a>
-                                <?php } else { echo $value['customer_name']; }?>
-                            </td>
-                            <td><?php echo $value['note']; ?></td>
-                            <td align="center"><?php echo $value['accountant_name']; ?></td>
-                            <td align="center">
-                                <div id="button<?php echo $value['id']; ?>">
-                                <?php if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'edit') && in_array($value['status'], array('PENDING', 'APPROVED'))) { ?>
-                                <a href="<?php echo Link::createAdmin_current(array('cmd' => 'edit', 'id' => $value['id'])); ?>" title="{{.edit.}}" class="list-button">{{.edit.}}</a>
-                                <?php } if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'approved') && in_array($value['status'], array('PENDING', 'FINISHED'))) { ?>
-                                <a href="javascript:void(0);" title="{{.approved.}} {{.edit.}}" onclick="javascript:if(confirm('{{.are_you_sure_want_to_approve_this_order.}}')){window.location.href='<?php echo Link::createAdmin_current(array('cmd' => 'approveedit', 'id' => $value['id'])); ?>';}" class="list-button">{{.approved.}} {{.edit.}}</a>
-                                <?php } if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'edit') && $value['status'] == 'PENDING') { ?>
-                                <a href="javascript:void(0);" title="{{.finish_order.}}" onclick="javascript:if(confirm('{{.are_you_sure_want_to_finish_this_order.}}')){window.location.href='<?php echo Link::createAdmin_current(array('cmd' => 'finishOrder', 'id' => $value['id'])); ?>';}" class="list-button">{{.finish.}}</a>
-                                <?php } ?>
-                                </div>
-                            </td>
-                        </tr>
-                        <?php $i++; } ?>
+                            <tr class="<?php echo ($i % 2 == 1 ? 'row0' : 'row1') . ' ' . strtolower($value['status']); ?>">
+                                <td align="right"><?php echo $i; ?></td>
+                                <td align="center"><input type="checkbox" name="chkid[]" value="<?php echo $value['id']; ?>" /></td>
+                                <td align="center"><?php echo $value['create_time']; ?></td>
+                                <td align="center"><?php echo $value['date_out']; ?></td>
+                                <td align="center"><?php echo Systems::displayVnDate($value['expired_date']); ?></td>
+                                <td align="center"><?php echo Systems::displayVnDate($value['time_finished']); ?></td>
+                                <td align="center"><?php echo $value['outsource_number']; ?></td>
+                                <td align="center"><?php echo $value['customer_code']; ?></td>
+                                <td>
+                                    <?php if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'view')) { ?>
+                                        <a href="<?php echo Link::createAdmin_current(array('cmd' => 'view', 'id' => $value['id'])); ?>" title="{{.view_detail.}}"><?php echo $value['customer_name']; ?></a>
+                                    <?php } else {
+                                        echo $value['customer_name'];
+                                    } ?>
+                                </td>
+                                <td><?php echo $value['note']; ?></td>
+                                <td align="center"><?php echo $value['accountant_name']; ?></td>
+                                <td align="center">
+                                    <div id="button<?php echo $value['id']; ?>">
+                                        <?php if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'edit') && in_array($value['status'], array('PENDING', 'APPROVED'))) { ?>
+                                            <a href="<?php echo Link::createAdmin_current(array('cmd' => 'edit', 'id' => $value['id'])); ?>" title="{{.edit.}}" class="list-button">{{.edit.}}</a>
+                                        <?php }
+                                        if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'approved') && in_array($value['status'], array('PENDING', 'FINISHED'))) { ?>
+                                            <a href="javascript:void(0);" title="{{.approved.}} {{.edit.}}" onclick="javascript:if(confirm('{{.are_you_sure_want_to_approve_this_order.}}')){window.location.href='<?php echo Link::createAdmin_current(array('cmd' => 'approveedit', 'id' => $value['id'])); ?>';}" class="list-button">{{.approved.}} {{.edit.}}</a>
+                                        <?php }
+                                        if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'edit') && $value['status'] == 'PENDING') { ?>
+                                            <a href="javascript:void(0);" title="{{.finish_order.}}" onclick="javascript:if(confirm('{{.are_you_sure_want_to_finish_this_order.}}')){window.location.href='<?php echo Link::createAdmin_current(array('cmd' => 'finishOrder', 'id' => $value['id'])); ?>';}" class="list-button">{{.finish.}}</a>
+                                        <?php } ?>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php $i++;
+                        } ?>
                     </tbody>
                 </table>
             </form>
@@ -290,21 +303,24 @@ $(document).ready(function(){
                 <tbody>
                     <tr>
                         <?php if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'add')) { ?>
-                        <td align="center">
-                            <a href="<?php echo Link::createAdmin_current(array('cmd' => 'add')); ?>" class="toolbar" title="{{.add_new.}}"><span class="icon-button Icon-32-Add" title="{{.add_new.}}"></span>{{.add_new.}}</a>
-                        </td>
-                        <?php } if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'edit')) { ?>
-                        <td align="center">
-                            <a href="javascript:void(0);" class="toolbar" title="{{.finish_order.}}" onclick="confirmCheckAction('frmAdminItemsList', 'finishListOrder', '{{.are_you_sure_want_to_finish_the_selected_items.}}');"><span class="icon-button Icon-32-Finish" title="{{.finish_order.}}"></span>{{.finish.}}</a>
-                        </td>
-                        <?php } if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'admin')) { ?>
-                        <td align="center">
-                            <a href="<?php echo Link::createAdmin_current(array('cmd' => 'statistic')); ?>" class="toolbar" title="{{.statistic.}}"><span class="icon-button Icon-32-Statistic" title="{{.statistic.}}"></span>{{.statistic.}}</a>
-                        </td>
-                        <?php } if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'approved')) { ?>
-                        <td align="center">
-                            <a href="javascript:void(0);" class="toolbar" title="{{.approved.}} {{.edit.}}" onclick="confirmCheckAction('frmAdminItemsList', 'approvelistedit', '{{.are_you_sure_want_to_approve_the_selected_items.}}');"><span class="icon-button Icon-32-Approve" title="{{.approved.}} {{.edit.}}"></span>{{.approved.}} {{.edit.}}</a>
-                        </td>
+                            <td align="center">
+                                <a href="<?php echo Link::createAdmin_current(array('cmd' => 'add')); ?>" class="toolbar" title="{{.add_new.}}"><span class="icon-button Icon-32-Add" title="{{.add_new.}}"></span>{{.add_new.}}</a>
+                            </td>
+                        <?php }
+                        if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'edit')) { ?>
+                            <td align="center">
+                                <a href="javascript:void(0);" class="toolbar" title="{{.finish_order.}}" onclick="confirmCheckAction('frmAdminItemsList', 'finishListOrder', '{{.are_you_sure_want_to_finish_the_selected_items.}}');"><span class="icon-button Icon-32-Finish" title="{{.finish_order.}}"></span>{{.finish.}}</a>
+                            </td>
+                        <?php }
+                        if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'admin')) { ?>
+                            <td align="center">
+                                <a href="<?php echo Link::createAdmin_current(array('cmd' => 'statistic')); ?>" class="toolbar" title="{{.statistic.}}"><span class="icon-button Icon-32-Statistic" title="{{.statistic.}}"></span>{{.statistic.}}</a>
+                            </td>
+                        <?php }
+                        if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'approved')) { ?>
+                            <td align="center">
+                                <a href="javascript:void(0);" class="toolbar" title="{{.approved.}} {{.edit.}}" onclick="confirmCheckAction('frmAdminItemsList', 'approvelistedit', '{{.are_you_sure_want_to_approve_the_selected_items.}}');"><span class="icon-button Icon-32-Approve" title="{{.approved.}} {{.edit.}}"></span>{{.approved.}} {{.edit.}}</a>
+                            </td>
                         <?php } ?>
                     </tr>
                 </tbody>

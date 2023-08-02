@@ -22,25 +22,25 @@ class AdminOutsourcing extends Controller {
      */
     private function _getNewItemProperties() {
         $this->form->post('customer_id')
-                ->post('date_out')
-                ->val('date_time', 'invalid_date_out')
-                ->post('expired_date')
-                ->val('date_time', 'invalid_date')
-                ->post('buyer_code')
-                ->val('minlength', 'invalid_customer_code', 2)
-                ->post('buyer_company')
-                ->val('minlength', 'invalid_buyer_company', 3)
-                ->post('buyer_address')
-                ->val('minlength', 'invalid_address', 3)
-                ->post('note')
-                ->post('records_new_withdrawal')
-                ->val('mixed', 'invalid_product_withdrawal_list', NULL, FALSE)
-                ->post('records_withdrawal')
-                ->val('mixed', 'invalid_product_withdrawal_list', NULL, FALSE)
-                ->post('new_list_material')
-                ->val('mixed', 'invalid_product_withdrawal_list', NULL, FALSE)
-                ->post('edit_list_material')
-                ->val('mixed', 'invalid_product_material_list', NULL, FALSE);
+            ->post('date_out')
+            ->val('date_time', 'invalid_date_out')
+            ->post('expired_date')
+            ->val('date_time', 'invalid_date')
+            ->post('buyer_code')
+            ->val('minlength', 'invalid_customer_code', 2)
+            ->post('buyer_company')
+            ->val('minlength', 'invalid_buyer_company', 3)
+            ->post('buyer_address')
+            ->val('minlength', 'invalid_address', 3)
+            ->post('note')
+            ->post('records_new_withdrawal')
+            ->val('mixed', 'invalid_product_withdrawal_list', NULL, FALSE)
+            ->post('records_withdrawal')
+            ->val('mixed', 'invalid_product_withdrawal_list', NULL, FALSE)
+            ->post('new_list_material')
+            ->val('mixed', 'invalid_product_withdrawal_list', NULL, FALSE)
+            ->post('edit_list_material')
+            ->val('mixed', 'invalid_product_material_list', NULL, FALSE);
         $data_post = $this->form->fetch();
         if (!$this->form->submit()) {
             throw new Exception($this->form->displayError());
@@ -85,7 +85,7 @@ class AdminOutsourcing extends Controller {
                     $cond = ' AND (tbl_outsourcing.user_id IN (' . $userIdList[Session::get('user_id')] . ') OR tbl_outsourcing.user_create_id = "' . Session::get('user_id') . '")';
                 }
             }
-//            $customerList = array();
+            //            $customerList = array();
 //            if (file_exists('caches/backend/Y3VzdG9tZXJNYW5hZ2VyTGlzdA')) {
 //                $customerManagerList = '';
 //                require_once 'caches/backend/Y3VzdG9tZXJNYW5hZ2VyTGlzdA';
@@ -245,72 +245,72 @@ class AdminOutsourcing extends Controller {
             $stringContent .= '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
             $stringContent .= '<style>table, table tr td {font-family: Arial, "Times New Roman", serif; font-size: 10pt; vertical-align: middle; padding: 2px 5px;}</style>';
             $stringContent .= '<table cellspacing="0" cellpadding="0"><tr>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td>'
-                    . '<td width="19" height="1"></td></tr>'
-                    . '<tr><td colspan="8" rowspan="8" align="left" valign="top"><img width="150" height="150" src="' . $this->image->show_image_url($GLOBALS['webconfig']['company_logo'], 150, 150) . '" /></td>'
-                    . '<td colspan="27" align="center">&nbsp;</td></tr>'
-                    . '<tr><td colspan="18" align="center"><span style="font-size: 19pt; text-transform: uppercase;">' . mb_strtoupper($this->view->renderLabel('outsourcing_order')) . '</span></td><td colspan="9">&nbsp;</td></tr>'
-                    . '<tr><td colspan="18" align="right">&nbsp;</td><td colspan="9" align="center"><span style="font-size: 9pt;">' . $this->view->renderLabel('template') . ': 01 GTKT-3LL</span></td></tr>'
-                    . '<tr><td colspan="18" align="center"><span style="font-size: 9pt;">' . $this->view->renderLabel('copy_2') . ': ' . $this->view->renderLabel('delivery_to_warehouse') . '</span></td><td colspan="9">&nbsp;</td></tr>'
-                    . '<tr><td colspan="18">&nbsp;</td>'
-                    . '<td colspan="9" align="center"><span style="font-size: 9pt;">' . $item['id'] . '/GC' . $item['month'] . '</span></td></tr>'
-                    . '<tr><td colspan="18" align="center"><span style="font-size: 9pt; font-style: italic">Ngày&nbsp;&nbsp; ' . $item['day'] . '&nbsp;&nbsp; tháng&nbsp;&nbsp;&nbsp; ' . $item['month'] . '&nbsp;    năm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ' . $item['year'] . '</span></td><td colspan="9">&nbsp;</td></tr>'
-                    . '<tr><td colspan="27">&nbsp;</td></tr>'
-                    . '<tr><td colspan="27">&nbsp;</td></tr>'
-                    . '<tr><td colspan="35" height="24">' . $this->view->renderLabel('customer') . ': ' . $item['customer_code'] . ' - ' . $item['customer_name'] . '</td></tr>';
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td>'
+                . '<td width="19" height="1"></td></tr>'
+                . '<tr><td colspan="8" rowspan="8" align="left" valign="top"><img width="150" height="150" src="' . $this->image->show_image_url($GLOBALS['webconfig']['company_logo'], 150, 150) . '" /></td>'
+                . '<td colspan="27" align="center">&nbsp;</td></tr>'
+                . '<tr><td colspan="18" align="center"><span style="font-size: 19pt; text-transform: uppercase;">' . mb_strtoupper($this->view->renderLabel('outsourcing_order')) . '</span></td><td colspan="9">&nbsp;</td></tr>'
+                . '<tr><td colspan="18" align="right">&nbsp;</td><td colspan="9" align="center"><span style="font-size: 9pt;">' . $this->view->renderLabel('template') . ': 01 GTKT-3LL</span></td></tr>'
+                . '<tr><td colspan="18" align="center"><span style="font-size: 9pt;">' . $this->view->renderLabel('copy_2') . ': ' . $this->view->renderLabel('delivery_to_warehouse') . '</span></td><td colspan="9">&nbsp;</td></tr>'
+                . '<tr><td colspan="18">&nbsp;</td>'
+                . '<td colspan="9" align="center"><span style="font-size: 9pt;">' . $item['id'] . '/GC' . $item['month'] . '</span></td></tr>'
+                . '<tr><td colspan="18" align="center"><span style="font-size: 9pt; font-style: italic">Ngày&nbsp;&nbsp; ' . $item['day'] . '&nbsp;&nbsp; tháng&nbsp;&nbsp;&nbsp; ' . $item['month'] . '&nbsp;    năm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ' . $item['year'] . '</span></td><td colspan="9">&nbsp;</td></tr>'
+                . '<tr><td colspan="27">&nbsp;</td></tr>'
+                . '<tr><td colspan="27">&nbsp;</td></tr>'
+                . '<tr><td colspan="35" height="24">' . $this->view->renderLabel('customer') . ': ' . $item['customer_code'] . ' - ' . $item['customer_name'] . '</td></tr>';
             $stringContent .= '<tr><td colspan="35" height="24">' . $this->view->renderLabel('note') . ': ' . $item['note'] . '</td></tr>'
-                    . '<tr><td colspan="35" style="border-bottom:#000 solid 0.3pt;">&nbsp;</td></tr>'
-                    . '<tr><td colspan="2" height="30" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt; font-weight: bold">STT</td>'
-                    . '<td colspan="4" height="30" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-weight: bold">' . $this->view->renderLabel('product_code') . '</td>'
-                    . '<td colspan="22" height="30" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-weight: bold">' . $this->view->renderLabel('product_information') . '</td>'
-                    . '<td colspan="3" height="30" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-weight: bold">' . $this->view->renderLabel('col_unit_excel') . '</td>'
-                    . '<td colspan="4" height="30" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-weight: bold">' . $this->view->renderLabel('col_quantity_excel') . '</td>'
-                    . '</tr>';
+                . '<tr><td colspan="35" style="border-bottom:#000 solid 0.3pt;">&nbsp;</td></tr>'
+                . '<tr><td colspan="2" height="30" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt; font-weight: bold">STT</td>'
+                . '<td colspan="4" height="30" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-weight: bold">' . $this->view->renderLabel('product_code') . '</td>'
+                . '<td colspan="22" height="30" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-weight: bold">' . $this->view->renderLabel('product_information') . '</td>'
+                . '<td colspan="3" height="30" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-weight: bold">' . $this->view->renderLabel('col_unit_excel') . '</td>'
+                . '<td colspan="4" height="30" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-weight: bold">' . $this->view->renderLabel('col_quantity_excel') . '</td>'
+                . '</tr>';
             $stringContent .= '<tr>'
-                    . '<td colspan="2" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0.3pt;">&nbsp;</td>'
-                    . '<td colspan="2" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-weight: bold;">STT</td>'
-                    . '<td colspan="4" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-weight: bold;">' . $this->view->renderLabel('col_code_excel') . '</td>'
-                    . '<td colspan="17" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-weight: bold;">' . $this->view->renderLabel('col_name_excel') . '</td>'
-                    . '<td colspan="3" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-weight: bold;">' . $this->view->renderLabel('col_unit') . '</td>'
-                    . '<td colspan="3" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-weight: bold;">' . $this->view->renderLabel('product_norms') . '</td>'
-                    . '<td colspan="4" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-weight: bold;">' . $this->view->renderLabel('col_quantity') . '</td>'
-                    . '</tr>';
+                . '<td colspan="2" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0.3pt;">&nbsp;</td>'
+                . '<td colspan="2" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-weight: bold;">STT</td>'
+                . '<td colspan="4" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-weight: bold;">' . $this->view->renderLabel('col_code_excel') . '</td>'
+                . '<td colspan="17" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-weight: bold;">' . $this->view->renderLabel('col_name_excel') . '</td>'
+                . '<td colspan="3" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-weight: bold;">' . $this->view->renderLabel('col_unit') . '</td>'
+                . '<td colspan="3" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-weight: bold;">' . $this->view->renderLabel('product_norms') . '</td>'
+                . '<td colspan="4" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-weight: bold;">' . $this->view->renderLabel('col_quantity') . '</td>'
+                . '</tr>';
             $index = 1;
             $checkRequireMaterial = 0;
-//            $subTotal = 0;
+            //            $subTotal = 0;
             foreach ($proList as $product) {
                 $stringContent .= '<tr><td colspan="2" align="right" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt;">' . $index . '</td>';
                 $stringContent .= '<td colspan="4" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0;">' . $product['product_code'] . '</td>';
@@ -322,14 +322,14 @@ class AdminOutsourcing extends Controller {
                 foreach ($materialProList as $materialValue) {
                     if ($materialValue['outsourcing_product_id'] == $product['id']) {
                         $stringContent .= '<tr>'
-                                . '<td colspan="2" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0.3pt; font-style: italic;">&nbsp;</td>'
-                                . '<td colspan="2" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-style: italic;">' . $index . '.' . $subIndex . '</td>'
-                                . '<td colspan="4" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-style: italic;">' . $materialValue['product_code'] . '</td>'
-                                . '<td colspan="17" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-style: italic;">' . $materialValue['product_name'] . ' - ' . $materialValue['product_specs'] . '</td>'
-                                . '<td colspan="3" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-style: italic;">' . $materialValue['product_unit'] . '</td>'
-                                . '<td colspan="3" align="right" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-style: italic;">' . $materialValue['product_norm'] . '</td>'
-                                . '<td colspan="4" align="right" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-style: italic;">' . ($product['quantity'] * $materialValue['product_norm']) . '</td>'
-                                . '</tr>';
+                            . '<td colspan="2" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0.3pt; font-style: italic;">&nbsp;</td>'
+                            . '<td colspan="2" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-style: italic;">' . $index . '.' . $subIndex . '</td>'
+                            . '<td colspan="4" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-style: italic;">' . $materialValue['product_code'] . '</td>'
+                            . '<td colspan="17" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-style: italic;">' . $materialValue['product_name'] . ' - ' . $materialValue['product_specs'] . '</td>'
+                            . '<td colspan="3" align="center" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-style: italic;">' . $materialValue['product_unit'] . '</td>'
+                            . '<td colspan="3" align="right" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-style: italic;">' . $materialValue['product_norm'] . '</td>'
+                            . '<td colspan="4" align="right" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0; font-style: italic;">' . ($product['quantity'] * $materialValue['product_norm']) . '</td>'
+                            . '</tr>';
                         if ($subIndex == 1) {
                             $checkRequireMaterial++;
                         }
@@ -339,31 +339,31 @@ class AdminOutsourcing extends Controller {
                 $stringContent .= '<tr><td colspan="35" style="border:#000 solid 0.3pt; border-width: 0 0.3pt 0.3pt 0.3pt;">&nbsp;</td></tr>';
                 $index++;
             }
-//            $stringContent .= '<tr><td colspan="30" align="right" style="border:#000 solid; border-width: 0 0.3pt 0.3pt 0.3pt; font-weight: bold;">' . $this->view->renderLabel('subtotal') . ':</td>'
+            //            $stringContent .= '<tr><td colspan="30" align="right" style="border:#000 solid; border-width: 0 0.3pt 0.3pt 0.3pt; font-weight: bold;">' . $this->view->renderLabel('subtotal') . ':</td>'
 //                    . '<td colspan="5" align="right" style="border:#000 solid; border-width: 0 0.3pt 0.3pt 0; font-weight: bold;">' . Systems::displayNumber($subTotal) . '</td></tr>'
             $stringContent .= '<tr><td colspan="35">&nbsp;</td></tr>'
-                    . '<tr><td colspan="8" align="center"><span style="font-size: 9pt;">' . $this->view->renderLabel('processing_staff_excel') . '</span></td>'
-                    . '<td colspan="9" align="center"><span style="font-size: 9pt;">&nbsp;</span></td>'
-                    . '<td colspan="10" align="center"><span style="font-size: 9pt;">' . $this->view->renderLabel('storekeepers') . '</span></td>'
-                    . '<td colspan="8" align="center"><span style="font-size: 9pt;">' . $this->view->renderLabel('editor_excel') . '</span></td></tr>'
-                    . '<tr><td colspan="8" align="center"><span style="font-size: 9pt;">(' . $this->view->renderLabel('sign_and_fullname') . ')</span></td>'
-                    . '<td colspan="9" align="center"><span style="font-size: 9pt;">&nbsp;</span></td>'
-                    . '<td colspan="10" align="center"><span style="font-size: 9pt;">(' . $this->view->renderLabel('sign_and_fullname') . ')</span></td>'
-                    . '<td colspan="8" align="center"><span style="font-size: 9pt;">(' . $this->view->renderLabel('sign_and_fullname') . ')</span></td></tr>'
-                    . '<tr><td colspan="35">&nbsp;</td></tr>'
-                    . '<tr><td colspan="35">&nbsp;</td></tr>'
-                    . '<tr><td colspan="35">&nbsp;</td></tr>'
-                    . '<tr><td colspan="35">&nbsp;</td></tr>'
-                    . '<tr><td colspan="35">&nbsp;</td></tr>'
-                    . '<tr><td colspan="35">&nbsp;</td></tr>'
-                    . '<tr><td colspan="8" align="center"><span style="font-size: 9pt; font-weight: bold; font-style: italic;">&nbsp;</span></td>'
-                    . '<td colspan="9" align="center"><span style="font-size: 9pt; font-weight: bold; font-style: italic;">&nbsp;</span></td>'
-                    . '<td colspan="10" align="center"><span style="font-size: 9pt; font-weight: bold; font-style: italic;">&nbsp;</span></td>'
-                    . '<td colspan="8" align="center"><span style="font-size: 9pt; font-weight: bold; font-style: italic;">' . $item['accountant_name'] . '</span></td></tr>'
-                    . '<tr><td colspan="35">&nbsp;</td></tr>'
-//                    . '<tr><td colspan="35" align="center"><span style="font-size: 9pt;">(' . $this->view->renderLabel('need_to_check_compare_before_accepting_the_invoice') . ')</span></td></tr>'
+                . '<tr><td colspan="8" align="center"><span style="font-size: 9pt;">' . $this->view->renderLabel('processing_staff_excel') . '</span></td>'
+                . '<td colspan="9" align="center"><span style="font-size: 9pt;">&nbsp;</span></td>'
+                . '<td colspan="10" align="center"><span style="font-size: 9pt;">' . $this->view->renderLabel('storekeepers') . '</span></td>'
+                . '<td colspan="8" align="center"><span style="font-size: 9pt;">' . $this->view->renderLabel('editor_excel') . '</span></td></tr>'
+                . '<tr><td colspan="8" align="center"><span style="font-size: 9pt;">(' . $this->view->renderLabel('sign_and_fullname') . ')</span></td>'
+                . '<td colspan="9" align="center"><span style="font-size: 9pt;">&nbsp;</span></td>'
+                . '<td colspan="10" align="center"><span style="font-size: 9pt;">(' . $this->view->renderLabel('sign_and_fullname') . ')</span></td>'
+                . '<td colspan="8" align="center"><span style="font-size: 9pt;">(' . $this->view->renderLabel('sign_and_fullname') . ')</span></td></tr>'
+                . '<tr><td colspan="35">&nbsp;</td></tr>'
+                . '<tr><td colspan="35">&nbsp;</td></tr>'
+                . '<tr><td colspan="35">&nbsp;</td></tr>'
+                . '<tr><td colspan="35">&nbsp;</td></tr>'
+                . '<tr><td colspan="35">&nbsp;</td></tr>'
+                . '<tr><td colspan="35">&nbsp;</td></tr>'
+                . '<tr><td colspan="8" align="center"><span style="font-size: 9pt; font-weight: bold; font-style: italic;">&nbsp;</span></td>'
+                . '<td colspan="9" align="center"><span style="font-size: 9pt; font-weight: bold; font-style: italic;">&nbsp;</span></td>'
+                . '<td colspan="10" align="center"><span style="font-size: 9pt; font-weight: bold; font-style: italic;">&nbsp;</span></td>'
+                . '<td colspan="8" align="center"><span style="font-size: 9pt; font-weight: bold; font-style: italic;">' . $item['accountant_name'] . '</span></td></tr>'
+                . '<tr><td colspan="35">&nbsp;</td></tr>'
+                //                    . '<tr><td colspan="35" align="center"><span style="font-size: 9pt;">(' . $this->view->renderLabel('need_to_check_compare_before_accepting_the_invoice') . ')</span></td></tr>'
 //                    . '<tr><td colspan="35"><br />&nbsp;</td></tr>'
-                    . '</table>';
+                . '</table>';
             if ($checkRequireMaterial == $index - 1) {
                 $this->_confirmPrint($id);
             } else {
@@ -474,7 +474,7 @@ class AdminOutsourcing extends Controller {
                 $arrdata[$key]['quantity'] = $product['quantity'];
                 $arrdata[$key]['price'] = $product['price'];
             } else {
-//                $arrdata[] = $product[$fieldName];
+                //                $arrdata[] = $product[$fieldName];
                 $arrdata[$key]['id'] = $product['id'];
                 $arrdata[$key]['name'] = htmlspecialchars_decode($product['name']);
                 $arrdata[$key]['desc'] = htmlspecialchars_decode($product['specification']);
@@ -564,7 +564,7 @@ class AdminOutsourcing extends Controller {
                 if (strpos($user['group'], 'SALES') !== FALSE) {
                     $this->view->salesUserList[$keyUser] = $user;
                 }
-//            if (strpos($user['group'], 'TRANSACTION') !== FALSE) {
+                //            if (strpos($user['group'], 'TRANSACTION') !== FALSE) {
                 if ($user['department'] == $this->view->renderLabel('customer_care_department') || $user['department'] == $this->view->renderLabel('commerce_department')) {
                     $this->view->accountantUserList[$keyUser] = $user;
                 }
@@ -603,7 +603,7 @@ class AdminOutsourcing extends Controller {
             Link::accessDenied();
         }
         Page::$title = $this->view->renderLabel('outsourcing_order_detail');
-//        $extra_cond = $this->_getExtraCond();
+        //        $extra_cond = $this->_getExtraCond();
         $extra_cond = '';
         if (is_numeric($id)) {
             $this->view->item = $this->model->itemSingleList($id, $extra_cond);
@@ -742,14 +742,14 @@ class AdminOutsourcing extends Controller {
                 $localReturnedList[$value['id']]['quantity_returned'] = Systems::displayFloatNumber($localReturnedList[$value['id']]['quantity_returned']);
             }
             $string_return .= '<tr class="detail' . $product_id . '">'
-                    . '<td align="right">&nbsp;</td><td align="right">' . $row_number . '.' . $index . '</td>'
-                    . '<td colspan="4"><a href="' . Link::createAdmin_current(array('cmd' => 'view', 'id' => $value['id'])) . '" title="' . $this->view->renderLabel('outsourcing_order_detail') . '" target="_blank">' . Systems::displayVnDate($value['date_out']) . ' - ' . $value['id'] . ' - ' . $value['customer_code'] . ' - ' . $value['customer_name'] . '</a></td>';
+                . '<td align="right">&nbsp;</td><td align="right">' . $row_number . '.' . $index . '</td>'
+                . '<td colspan="4"><a href="' . Link::createAdmin_current(array('cmd' => 'view', 'id' => $value['id'])) . '" title="' . $this->view->renderLabel('outsourcing_order_detail') . '" target="_blank">' . Systems::displayVnDate($value['date_out']) . ' - ' . $value['id'] . ' - ' . $value['customer_code'] . ' - ' . $value['customer_name'] . '</a></td>';
             $string_return .= '<td align="right">' . Systems::displayNumber($productionList[$value['id']]['quantity_production']) . '</td>';
             $string_return .= '<td align="right">' . Systems::displayNumber($localStockOutList[$value['id']]['quantity_issued']) . '</td>';
             $string_return .= '<td align="right">' . Systems::displayNumber($localStockOutList[$value['id']]['quantity_issued'] - $productionList[$value['id']]['quantity_production']) . '</td>';
             $string_return .= '<td align="right">' . Systems::displayNumber($localReturnedList[$value['id']]['quantity_returned']) . '</td>';
             $string_return .= '<td align="right">' . Systems::displayNumber($localReturnedList[$value['id']]['quantity_returned'] - ($localStockOutList[$value['id']]['quantity_issued'] - $productionList[$value['id']]['quantity_production'])) . '</td>'
-                    . '</tr>';
+                . '</tr>';
             $index++;
         }
         echo $string_return;
@@ -878,14 +878,14 @@ class AdminOutsourcing extends Controller {
         Page::$title = $this->view->renderLabel('edit') . ' ' . $this->view->renderLabel('outsourcing_order');
         if (is_numeric($id)) {
             $this->view->item = $this->model->itemSingleList($id);
-//            $itemStockoutTransferList = $this->model->getStockOutByOutsource($id);
+            //            $itemStockoutTransferList = $this->model->getStockOutByOutsource($id);
 //            if (empty($itemStockoutTransferList) || in_array('MANAGER', Session::get('group')) || $this->view->item['status'] == 'APPROVED') {
             if ($this->view->item['status'] != 'FINISHED' && $this->view->item['status'] != 'DELETED') {
                 if ($this->view->item) {
                     $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
                     $this->view->proList = $this->model->productOutsourceList($id);
                     foreach ($this->view->item as $key => $value) {
-                        if (is_string($value) and!Link::getPost($key)) {
+                        if (is_string($value) and !Link::getPost($key)) {
                             if ($key == 'date_out') {
                                 $_POST[$key] = Systems::displayVnDate($value);
                             } else if ($key == 'expired_date') {
@@ -990,7 +990,7 @@ class AdminOutsourcing extends Controller {
                                 $stringNormsList = array();
                                 $endProductPrice = array();
                                 foreach ($proList as $key => $product) {
-//                                            Data for Insert new record
+                                    //                                            Data for Insert new record
                                     $proInsData[$key]['outsourcing_id'] = $stock_id;
                                     $proInsData[$key]['product_id'] = $product['real_id'];
                                     $proInsData[$key]['product_code'] = $product['real_code'];
@@ -1062,7 +1062,7 @@ class AdminOutsourcing extends Controller {
 
             if ($data) {
                 $curItem = $this->model->itemSingleList($id);
-//                $itemStockoutTransferList = $this->model->getStockOutByOutsource($id);
+                //                $itemStockoutTransferList = $this->model->getStockOutByOutsource($id);
 //                if (empty($itemStockoutTransferList) || in_array('MANAGER', Session::get('group')) || $curItem['status'] == 'APPROVED') {
                 if ($curItem['status'] != 'FINISHED' && $curItem['status'] != 'DELETED') {
                     $originCurentProList = $this->model->productOutsourceList($id);
@@ -1270,7 +1270,7 @@ class AdminOutsourcing extends Controller {
                                                 $errors .= '<li><a href="javascript:void(0);" onclick="javascript:$(\'#new_list_material_n' . $kmn . '_real_code\').focus();$(\'tr#row_material_n' . $kmn . ' input\').addClass(\'error\');$(\'tr#rows' . $kmn . ' textarea\').addClass(\'error\');">22. ' . $promn['real_code'] . ' - ' . $promn['real_name'] . ': ' . $this->view->renderLabel('product_information_incorrect') . '</a></li>';
                                                 $flagCheck = FALSE;
                                             }
-//                                            if ($originCurentProList[$proOSKeyNew]['quantity_import'] > 0 && (!$this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'admin') || !in_array('MANAGER', Session::get('group')))) {
+                                            //                                            if ($originCurentProList[$proOSKeyNew]['quantity_import'] > 0 && (!$this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'admin') || !in_array('MANAGER', Session::get('group')))) {
                                             if ($originCurentProList[$proOSKeyNew]['quantity_import'] > 0 && $curItem['status'] != 'APPROVED') {
                                                 $errors .= '<li><a href="javascript:void(0);" onclick="javascript:$(\'#new_list_material_n' . $kmn . '_real_code\').focus();$(\'tr#row_material_n' . $kmn . ' input\').addClass(\'error\');$(\'tr#rows' . $kmn . ' textarea\').addClass(\'error\');">23. ' . $promn['real_code'] . ' - ' . $promn['real_name'] . ': ' . $this->view->renderLabel('cannot_add') . '</a></li>';
                                                 $flagCheck = FALSE;
@@ -1319,7 +1319,7 @@ class AdminOutsourcing extends Controller {
                                         $modify .= ' * Date: ' . date('d/m/Y H:i:s') . ":\n" . $strMod;
                                         $modify .= ' - User: ' . Session::get('user_fullname') . ' - ' . Session::get('user_id') . "\n";
                                     }
-//                                    $dataCusInfo['modify_time'] = time();
+                                    //                                    $dataCusInfo['modify_time'] = time();
                                     $dataCusInfo['log'] = $modify;
                                     unset($modify);
                                     unset($strMod);
@@ -1350,22 +1350,22 @@ class AdminOutsourcing extends Controller {
                                             }
                                             $strModEndImported = '';
                                             $dataEndImportedUpdate = array();
-//                                            if ($originCurentProList[$kW]['quantity_import'] == 0 || ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'admin') && in_array('MANAGER', Session::get('group')))) {
+                                            //                                            if ($originCurentProList[$kW]['quantity_import'] == 0 || ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'admin') && in_array('MANAGER', Session::get('group')))) {
                                             if ($vW['real_hire_price'] != $originCurentProList[$kW]['hire_price']) {
                                                 $strModProAdd[$kW] .= ' - ' . 'Old hire_price: ' . $originCurentProList[$kW]['hire_price'] . "\n";
                                                 $strModProAdd[$kW] .= '   ' . 'New hire_price: ' . $vW['real_hire_price'] . "\n";
                                                 $proOutsourcingEdit[$kW]['hire_price'] = $vW['real_hire_price'];
                                                 if ($originCurentProList[$kW]['quantity_import'] > 0) {
-//                                                    Cap nhat lai tien cong <br />;
+                                                    //                                                    Cap nhat lai tien cong <br />;
                                                     $strModEndImported .= ' - ' . 'Old hire_price: ' . $originCurentProList[$kW]['hire_price'] . "\n";
                                                     $strModEndImported .= '   ' . 'New hire_price: ' . $vW['real_hire_price'] . "\n";
                                                     $dataEndImportedUpdate['hire_price_update'] = $vW['real_hire_price'];
                                                 } else {
-//                                                    Khong cap nhat lai tien cong <br />;
+                                                    //                                                    Khong cap nhat lai tien cong <br />;
                                                     $dataEndImportedUpdate['hire_price_update'] = $originCurentProList[$kW]['hire_price'];
                                                 }
                                             } else {
-//                                                Khong cap nhat lai tien cong 2<br />;
+                                                //                                                Khong cap nhat lai tien cong 2<br />;
                                                 $dataEndImportedUpdate['hire_price_update'] = $originCurentProList[$kW]['hire_price'];
                                             }
                                             if ($arrMaterialPriceList[$kW] + $vW['real_hire_price'] != $originCurentProList[$kW]['price']) {
@@ -1373,15 +1373,15 @@ class AdminOutsourcing extends Controller {
                                                 $strModProAdd[$kW] .= '   ' . 'New price: ' . ($arrMaterialPriceList[$kW] + $vW['real_hire_price']) . "\n";
                                                 $proOutsourcingEdit[$kW]['price'] = $arrMaterialPriceList[$kW] + $vW['real_hire_price'];
                                                 if ($originCurentProList[$kW]['quantity_import'] > 0) {
-//                                                    Cap nhat lai gia thanh pham
+                                                    //                                                    Cap nhat lai gia thanh pham
                                                     $strModEndImported .= ' - ' . 'Auto update price: ' . $originCurentProList[$kW]['price'] . ' -> ' . ($arrMaterialPriceList[$kW] + $vW['real_hire_price']) . "\n";
                                                     $dataEndImportedUpdate['price_update'] = ($arrMaterialPriceList[$kW] + $vW['real_hire_price']);
                                                 } else {
-//                                                    Khong cap nhat lai gia thanh pham <br />;
+                                                    //                                                    Khong cap nhat lai gia thanh pham <br />;
                                                     $dataEndImportedUpdate['price_update'] = $originCurentProList[$kW]['price'];
                                                 }
                                             } else {
-//                                                Khong cap nhat lai gia thanh pham 2<br />;
+                                                //                                                Khong cap nhat lai gia thanh pham 2<br />;
                                                 $dataEndImportedUpdate['price_update'] = $originCurentProList[$kW]['price'];
                                             }
                                             if ($strModEndImported) {
@@ -1395,7 +1395,7 @@ class AdminOutsourcing extends Controller {
                                                 $dataUpdatePCPrice[$originCurentProList[$kW]['product_id']]['create_time'] = $endImportedList[$originCurentProList[$kW]['product_id']]['create_time'];
                                                 $dataUpdatePCPrice[$originCurentProList[$kW]['product_id']]['stockin'] = 'MAIN';
                                             }
-//                                            }
+                                            //                                            }
                                             if ($strModProAdd[$kW]) {
                                                 $strModPro[$kW] = ' * Date: ' . date('d/m/Y H:i:s') . ":\n";
                                                 $strModPro[$kW] .= $strModProAdd[$kW];
@@ -1547,7 +1547,7 @@ class AdminOutsourcing extends Controller {
             $extra_cond = ' AND tbl_outsourcing.user_create_id = "' . Session::get('user_id') . '"';
         }
         $currentItem = $this->model->itemSingleList($id, $extra_cond);
-        if ($currentItem ['status'] == 'PENDING' || $currentItem ['status'] == 'CANCELING') {
+        if ($currentItem['status'] == 'PENDING' || $currentItem['status'] == 'CANCELING') {
             $canDelete = TRUE;
             $proList = $this->model->productOutsourceList($id);
             if ($currentItem['status'] == 'PENDING') {

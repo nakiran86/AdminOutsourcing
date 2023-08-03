@@ -582,6 +582,17 @@ class AdminOutsourcing extends Controller {
             $this->view->itemList[$key]['create_time'] = date("H:i:s d/m/Y", $item['create_time']);
             $this->view->itemList[$key]['accountant_name'] = $userList[$item['user_create_id']]['fullname'];
             $this->view->itemList[$key]['outsource_number'] = $item['id'];
+            $this->view->itemList[$key]['handler_list_name'] = $this->view->renderLabel('none_user');
+            if ($item['handler_id_list']) {
+                $handlerIdList[$key] = explode('|', $item['handler_id_list']);
+                $stringUserId[$key] = '';
+                foreach ($handlerIdList[$key] as $user) {
+                    if (isset($userList[$user])) {
+                        $stringUserId[$key] .= $userList[$user]['fullname'] . ', ';
+                    }
+                }
+                $this->view->itemList[$key]['handler_list_name'] = $stringUserId[$key];
+            }
         }
         $content = $this->view->render('adminoutsourcing/index', array(
             'salesUserList' => $this->view->salesUserList,
@@ -615,6 +626,23 @@ class AdminOutsourcing extends Controller {
                     $this->view->item['sales_name'] = $userList[$this->view->item['user_id']]['fullname'];
                 } else {
                     $this->view->item['sales_name'] = $this->view->renderLabel('public_customer');
+                }
+                $this->view->item['handler_list_name'] = $this->view->renderLabel('none_user');
+                $this->view->item['handler_list_arr'] = array();
+                if ($this->view->item['handler_id_list']) {
+                    $handlerIdList = explode('|', $this->view->item['handler_id_list']);
+                    $stringUserId = '';
+                    foreach ($handlerIdList as $user) {
+                        if (isset($userList[$user])) {
+                            $stringUserId .= $userList[$user]['fullname'] . ', ';
+                        }
+                    }
+                    $this->view->item['handler_list_name'] = $stringUserId;
+                    $this->view->item['handler_list_arr'] = $handlerIdList;
+                }
+                $this->view->item['store_dept_edit'] = false;
+                if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'lock') && in_array('STORE', Session::get('group'))) {
+                    $this->view->item['store_dept_edit'] = true;
                 }
                 $this->view->item['accountant_name'] = $userList[$this->view->item['user_create_id']]['fullname'];
                 $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
@@ -667,6 +695,8 @@ class AdminOutsourcing extends Controller {
                     }
                 }
 
+                $allStoreUserList = $this->model->getUserList(' AND `tbl_user`.`department` = "' . $this->view->renderLabel('warehouse_department') . '" AND `tbl_user`.`status` <> "DELETED" AND `tbl_user`.`block` = "0"');
+
                 $content = $this->view->render('adminoutsourcing/view', array(
                     'subMenuList' => $this->view->subMenuList,
                     'item' => $this->view->item,
@@ -674,7 +704,8 @@ class AdminOutsourcing extends Controller {
                     'proMaterialList' => $this->view->proMaterialList,
                     'itemList' => $this->view->itemList,
                     'itemReturnedList' => $this->view->itemReturnedList,
-                    'itemsGeneral' => $this->view->itemsGeneral
+                    'itemsGeneral' => $this->view->itemsGeneral,
+                    'allStoreUserList' => $allStoreUserList
                 ), 'plugins/AdminOutsourcing/');
                 return $content;
             } else {
@@ -1712,6 +1743,103 @@ class AdminOutsourcing extends Controller {
             }
         }
         Link::redirectAdminCurrent();
+    }
+
+    public function storeDeptSave() {
+        if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'lock') && in_array('STORE', Session::get('group'))) {
+            $cond = ' AND tbl_outsourcing.`status` = "PENDING"';
+            $records = Link::getPost('records');
+            $currentItem = $this->model->itemSingleList($records['id'], $cond);
+            if ($currentItem) {
+                $modify = $currentItem['log'];
+                $data['id'] = $records['id'];
+                $strMod = '';
+                $data['handler_id_list'] = '|' . implode('|', $records['handler_id_list']) . '|';
+                $data['num_hours'] = $records['num_hours'];
+                if ($currentItem['warehouse_note'] != $records['warehouse_note']) {
+                    $data['warehouse_note'] = $records['warehouse_note'];
+                    $data['time_warehouse_note'] = time();
+                }
+                foreach ($records as $field => $record) {
+                    if ($currentItem[$field] != $record) {
+                        $strMod .= " - ACTION: Edit $field\n";
+                        $strMod .= ' - Old ' . $field . ': ' . $currentItem[$field] . "\n";
+                        $strMod .= '   New ' . $field . ': ' . $record . "\n";
+                    }
+                }
+                if ($strMod) {
+                    $modify .= ' * Date: ' . date('d/m/Y H:i:s') . ":\n" . $strMod;
+                    $modify .= ' - User: ' . Session::get('user_fullname') . ' - ' . Session::get('user_id') . "\n";
+                    $data['log'] = $modify;
+                    $this->model->editSave('tbl_outsourcing', $data);
+                }
+            }
+        }
+        Link::redirectAdminCurrent();
+    }
+    public function statisticOutsourcing() {
+        if (!$this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'admin')) {
+            Link::accessDenied();
+        }
+        Page::$title = $this->view->renderLabel('outsourcing_order_statistics');
+        $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
+
+        if (Link::get('cbMonth') && Link::get('cbYear')) {
+            $yearMonth = Link::get('cbYear') . ( Link::get('cbMonth') > 9 ?  Link::get('cbMonth') : '0' .  Link::get('cbMonth'));
+            $fdOfMonth = Link::get('cbYear') . '-' . (Link::get('cbMonth') < 10 ? '0' . Link::get('cbMonth') : Link::get('cbMonth')) . '-01';
+            $ldOfMonth = date('Y-m-t', strtotime($fdOfMonth));
+        } else {
+            $yearMonth = date('Ym');
+            $fdOfMonth = date('Y-m-01');
+            $ldOfMonth = date('Y-m-t');
+        }
+
+        if (Link::get('from_date') || Link::get('to_date')) {
+            $pagesize = (Link::get('pagesize') > 0) ? Link::get('pagesize') : 50;
+            $start = ($this->view->page_no() - 1) * $pagesize;
+            $cond = '';
+            if (Link::get('from_date')) {
+                $cond .= ' AND `tbl_stockout_local`.`date_out` >= "' . Systems::displaySqlDate(Link::get('from_date')) . '"';
+            }
+            if (Link::get('to_date')) {
+                $cond .= ' AND `tbl_stockout_local`.`date_out` <= "' . Systems::displaySqlDate(Link::get('to_date')) . '"';
+            }
+            // $total_record = $this->model->getTotalStatisticRecord($cond);
+            // $this->view->totalRecord = $total_record['total_record'];
+            // $this->view->totalPage = $this->view->totalPage($this->view->totalRecord, $pagesize);
+            // $this->view->pagingList = $this->view->paging($this->view->totalRecord, $pagesize, FALSE);
+            $this->view->itemsList = $this->model->getListStatistic($cond, $start, $pagesize);
+            // $outsourceIdList = $this->model->getListOutsourceByProductId($cond . ' AND tbl_stockout_local_product.item_id IN ("' . implode('","', array_keys($this->view->itemsList)) . '")');
+            // $itemsProductionList = $this->model->getListQuantityProduction(' AND tbl_outsourcing_product.outsourcing_id IN ("' . implode('","', array_keys($outsourceIdList)) . '")');
+            // $stockoutIdList = $this->model->getListLocalStockOutId(' AND tbl_stockout_local.outsourcing_id IN ("' . implode('","', array_keys($outsourceIdList)) . '")');
+            // $itemsReturnedList = $this->model->getListStatisticReturnList(' AND tbl_local_returned.stock_out_local_id IN ("' . implode('","', array_keys($stockoutIdList)) . '")');
+
+            foreach ($this->view->itemsList as $value) {
+                // if (isset($itemsProductionList[$value['id']])) {
+                //     $this->view->itemsList[$value['id']]['quantity_production'] = Systems::displayFloatNumber($itemsProductionList[$value['id']]['quantity_production']);
+                // } else {
+                //     $this->view->itemsList[$value['id']]['quantity_production'] = 0;
+                // }
+                // if (isset($itemsReturnedList[$value['id']])) {
+                //     $this->view->itemsList[$value['id']]['quantity_returned'] = Systems::displayFloatNumber($itemsReturnedList[$value['id']]['quantity_returned']);
+                // } else {
+                //     $this->view->itemsList[$value['id']]['quantity_returned'] = 0;
+                // }
+            }
+        } else {
+            $this->view->totalRecord = 0;
+            $this->view->totalPage = 0;
+            $this->view->pagingList = '';
+            $this->view->itemsList = array();
+        }
+        $content = $this->view->render('adminoutsourcing/statistic_outsourcing', array(
+            'subMenuList' => $this->view->subMenuList,
+            'totalRecord' => $this->view->totalRecord,
+            'totalPage' => $this->view->totalPage,
+            'pagingList' => $this->view->pagingList,
+            'itemsList' => $this->view->itemsList
+        ), 'plugins/AdminOutsourcing/');
+        return $content;
     }
 
 }

@@ -1,154 +1,3 @@
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('input#from_date').datepicker({
-            dateFormat: 'dd/mm/yy', changeMonth: true, changeYear: true,
-            onClose: function(selectedDate) {
-                $("#to_date").datepicker("option", "minDate", selectedDate);
-            }
-        });
-        $('input#to_date').datepicker({
-            dateFormat: 'dd/mm/yy', changeMonth: true, changeYear: true,
-            onClose: function(selectedDate) {
-                $("#from_date").datepicker("option", "maxDate", selectedDate);
-            }
-        });
-        $('input#customer_name').autocomplete({
-            source: '<?php echo Link::createAdmin_current(array('cmd' => 'showfactory')); ?>',
-            minChars: 1, max: 15, width: 200, selectFirst: false,
-            select: function(event, ui) {
-                $("#customer_id").val(ui.item.id);
-            }
-        }).autocomplete("instance")._renderItem = function(ul, item) {
-            return $("<li>").append("<a>" + item.code + "<br>" + item.value + "<\/a>").appendTo(ul);
-        };
-        $('input#factory_name').autocomplete({
-            source: '<?php echo Link::createAdmin_current(array('cmd' => 'showfactory')); ?>',
-            minChars: 1, max: 15, width: 200, selectFirst: false,
-            select: function(event, ui) {
-                $("#factory_id").val(ui.item.id);
-            }
-        }).autocomplete("instance")._renderItem = function(ul, item) {
-            return $("<li>").append("<a>" + item.code + "<br>" + item.value + "<\/a>").appendTo(ul);
-        };
-    <?php if (Link::get('cbChooseDay') == 'day') { ?>
-            $("#cbMonth").attr('disabled', 'disabled');
-            $("#cbMonth").hide();
-            $("#cbYear").attr('disabled', 'disabled');
-            $("#cbYear").hide();
-    <?php } else if (Link::get('cbChooseDay') == 'month') { ?>
-                $("#from_date").attr('disabled', 'disabled');
-                $("#from_date").hide();
-                $("#to_date").attr('disabled', 'disabled');
-                $("#to_date").hide();
-                $("span.datelabel").hide();
-    <?php } else { ?>
-                // $("#cbMonth").attr('disabled', 'disabled');
-                // $("#cbMonth").hide();
-                // $("#cbYear").attr('disabled', 'disabled');
-                // $("#cbYear").hide();
-                $("#from_date").attr('disabled', 'disabled');
-                $("#from_date").hide();
-                $("#to_date").attr('disabled', 'disabled');
-                $("#to_date").hide();
-                $("span.datelabel").hide();
-    <?php } ?>
-        $('select#cbChooseDay').change(function() {
-            if ($(this).val() == 'day') {
-                $("#cbMonth").attr('disabled', 'disabled');
-                $("#cbMonth").hide();
-                $("#cbYear").attr('disabled', 'disabled');
-                $("#cbYear").hide();
-                $("#from_date").removeAttr('disabled');
-                $("#from_date").show();
-                $("#to_date").removeAttr('disabled');
-                $("#to_date").show();
-                $("span.datelabel").show();
-            } else if ($(this).val() == 'month') {
-                $("#from_date").attr('disabled', 'disabled');
-                $("#from_date").hide();
-                $("#to_date").attr('disabled', 'disabled');
-                $("#to_date").hide();
-                $("span.datelabel").hide();
-                $("#cbMonth").removeAttr('disabled');
-                $("#cbMonth").show();
-                $("#cbYear").removeAttr('disabled');
-                $("#cbYear").show();
-            } else {
-                $("#cbMonth").attr('disabled', 'disabled');
-                $("#cbMonth").hide();
-                $("#cbYear").attr('disabled', 'disabled');
-                $("#cbYear").hide();
-                $("#from_date").attr('disabled', 'disabled');
-                $("#from_date").hide();
-                $("#to_date").attr('disabled', 'disabled');
-                $("#to_date").hide();
-                $("span.datelabel").hide();
-            }
-        });
-    });
-
-    function showHideDetail(rowid, rowstatus, rowno) {
-        if (rowstatus == 'show') {
-            $('div#no' + rowid).html('<a href="javascript:void(0);" onclick="showHideDetail(\'' + rowid + '\', \'hide\', \'' + rowno + '\');" title="{{.hide_material.}}"><span class="icon-button-16 Icon-16-Collapse" title="{{.hide_material.}}"><\/span><\/a>');
-            if ($('tr.detail' + rowid).length > 0) {
-                $('tr.detail' + rowid).show();
-            } else {
-                $.ajax({
-                    url: '<?php echo Link::createAdmin_current(array('cmd' => 'showdetailstockout')); ?>',
-                    data: {
-                        proid: rowid,
-                        fromdate: "<?php echo Link::get('from_date'); ?>",
-                        todate: "<?php echo Link::get('to_date'); ?>",
-                        customer: "<?php echo Link::get('customer_id'); ?>",
-                        factory: "<?php echo Link::get('factory_id'); ?>",
-                        rowno: rowno
-                    },
-                    success: function(data) {
-                        $('tr#item' + rowid).after(data);
-                    }
-                });
-            }
-        }
-        if (rowstatus == 'hide') {
-            $('div#no' + rowid).html('<a href="javascript:void(0);" onclick="showHideDetail(\'' + rowid + '\', \'show\', \'' + rowno + '\');" title="{{.show_material.}}"><span class="icon-button-16 Icon-16-Expand" title="{{.show_material.}}"><\/span><\/a>');
-            $('tr.detail' + rowid).hide();
-        }
-    }
-
-    function checkFactory(fname) {
-        $.ajax({
-            url: '<?php echo Link::createAdmin_current(); ?>',
-            data: {
-                cmd: 'checkfactory',
-                nameid: fname
-            },
-            success: function(data) {
-                if (data) {
-                    datashow = JSON.parse(data);
-                    $('#factory_name').val(datashow.value);
-                    $('#factory_id').val(datashow.id);
-                }
-            }
-        });
-    }
-
-    function checkCustomer(cname) {
-        $.ajax({
-            url: '<?php echo Link::createAdmin_current(); ?>',
-            data: {
-                cmd: 'checkfactory',
-                nameid: cname
-            },
-            success: function(data) {
-                if (data) {
-                    datashow = JSON.parse(data);
-                    $('#customer_name').val(datashow.value);
-                    $('#customer_id').val(datashow.id);
-                }
-            }
-        });
-    }
-</script>
 <div class="content-wrapper">
     <div class="path">
         <ul>
@@ -192,13 +41,6 @@
                             <tr>
                                 <td class="key">{{.col_date_import.}}</td>
                                 <td>
-                                    <select id="cbChooseDay" name="cbChooseDay">
-                                        <option value="day">{{.by.}} {{.day.}}</option>
-                                        <option value="month">{{.by.}} {{.month.}}</option>
-                                    </select>
-                                    <script type="text/javascript">$('select#cbChooseDay').val('<?php echo Link::get('cbChooseDay', 'month'); ?>');</script>
-                                    <span class="datelabel">{{.from.}}</span> <input type="text" name="from_date" id="from_date" maxlength="10" class="dateTime" value="<?php echo Link::get('from_date'); ?>" autocomplete="off" />
-                                    <span class="datelabel">{{.to.}}</span> <input type="text" name="to_date" id="to_date" maxlength="10" class="dateTime" value="<?php echo Link::get('to_date'); ?>" autocomplete="off" />
                                     <select id="cbMonth" name="cbMonth">
                                         <?php for ($month = 1; $month <= 12; $month++) { ?>
                                             <option value="<?php echo $month; ?>">{{.month.}} <?php echo $month; ?></option>
@@ -214,91 +56,48 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td class="key">{{.customer_name.}}</td>
-                                <td>
-                                    <input type="text" name="customer_name" id="customer_name" class="TextInput" value="<?php echo Link::get('customer_name'); ?>" onblur="checkCustomer(this.value);" />
-                                    <input type="hidden" name="customer_id" id="customer_id" value="<?php echo Link::get('customer_id'); ?>" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="key">{{.factory_name.}}</td>
-                                <td>
-                                    <input type="text" name="factory_name" id="factory_name" class="TextInput" value="<?php echo Link::get('factory_name'); ?>" onblur="checkFactory(this.value);" />
-                                    <input type="hidden" name="factory_id" id="factory_id" value="<?php echo Link::get('factory_id'); ?>" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="key">{{.product.}}</td>
-                                <td><input type="text" name="product" id="product" class="TextInput" value="<?php echo Link::get('product'); ?>" /></td>
-                            </tr>
-                            <tr>
-                                <td colspan="4" align="center"><input type="submit" name="btnSearch" id="btnSearch" value="{{.search.}}" /><input type="button" class="Button" id="btnRemoveFilter" value="{{.remove_filter.}}" name="btnRemoveFilter" onclick="javascript:window.location.href='<?php echo Link::createAdmin_current(array('cmd' => 'statistic')); ?>';" /></td>
+                                <td colspan="4" align="center"><input type="submit" name="btnSearch" id="btnSearch" value="{{.search.}}" /><input type="button" class="Button" id="btnRemoveFilter" value="{{.remove_filter.}}" name="btnRemoveFilter" onclick="javascript:window.location.href='<?php echo Link::createAdmin_current(array('cmd' => 'statisticOutsourcing')); ?>';" /></td>
                             </tr>
                         </tbody>
                     </table>
                 </form>
             </div>
-            <table cellspacing="1" cellpadding="4" class="admintable">
-                <tbody>
-                    <tr>
-                        <td><?php echo ($this->pagingList ? $this->pagingList : ''); ?></td>
-                        <td style="vertical-align: middle; padding-top: 0;" align="right">
-                            {{.total.}}: <font color="Brown"><span><?php echo $this->totalRecord; ?></span></font> {{.record.}} / <?php echo $this->totalPage; ?> {{.page.}} - {{.show.}}
-                            <select id="cbItemPerPage" onchange="javascript:window.location.href='<?php echo Link::createAll(array('pagesize'), array(), false); ?>&pagesize='+this.value;" name="cbItemPerPage">
-                                <option value="10">10</option>
-                                <option value="20">20</option>
-                                <option value="50" selected="selected">50</option>
-                                <option value="100">100</option>
-                                <option value="200">200</option>
-                                <option value="500">500</option>
-                            </select>
-                            {{.record.}} / {{.page.}}
-                            <?php if (Link::get('pagesize')) { ?>
-                                <script type="text/javascript">$('select#cbItemPerPage').val('<?php echo Link::get('pagesize'); ?>');</script>
-                            <?php } ?>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
             <div class="content-list">
                 <form name="frmAdminItemsList" id="frmAdminItemsList" action="" method="post">
                     <input name="cmd" type="hidden" id="cmd" />
                     <table cellspacing="0" border="1" class="adminlist">
                         <thead>
                             <tr>
-                                <th colspan="2" width="35">#</th>
-                                <th class="col_60">{{.col_code.}}</th>
-                                <th class="col_250">{{.col_name.}}</th>
-                                <th class="col_200">{{.col_specification.}}</th>
-                                <th class="col_50">{{.col_unit.}}</th>
-                                <th class="col_60">{{.quantity_production.}}</th>
-                                <th class="col_60">{{.quantity_issued.}}</th>
-                                <th class="col_60">{{.excessive_quantity.}}</th>
-                                <th class="col_60">{{.quantity_returned.}}</th>
-                                <th class="col_60">{{.quantity_different.}}</th>
+                                <th class="col_60">{{.total.}}</th>
+                                <th class="col_250">{{.orders_on_time.}}</th>
+                                <th class="col_200">{{.orders_delayed.}}</th>
                             </tr>
                         </thead>
                         <tbody id="list">
                             <?php if ($this->itemsList) { ?>
-                                <?php $k = 1;
-                                foreach ($this->itemsList as $value) { ?>
-                                    <tr id="item<?php echo $value['id']; ?>" class="<?php echo ($k % 2 == 1 ? 'row0' : 'row1') . ($value['quantity_returned'] - ($value['quantity_issued'] - $value['quantity_production']) >= 0 ? '' : ' miss'); ?>">
-                                        <td width="15" align="center">
-                                            <div id="no<?php echo $value['id']; ?>"><a href="javascript:void(0);" onclick="showHideDetail('<?php echo $value['id']; ?>', 'show', '<?php echo $k; ?>');" title="{{.show_detail_outsourcing_list.}}"><span class="icon-button-16 Icon-16-Expand" title="{{.show_detail_outsourcing_list.}}"></span></a></div>
-                                        </td>
-                                        <td width="20" align="right"><?php echo $k; ?></td>
-                                        <td align="center"><?php echo $value['item_code']; ?></td>
-                                        <td><?php echo $value['item_name']; ?></td>
-                                        <td><?php echo $value['item_specs']; ?></td>
-                                        <td align="center"><?php echo $value['item_unit']; ?></td>
-                                        <td align="right"><?php echo Systems::displayNumber($value['quantity_production']); ?></td>
-                                        <td align="right"><?php echo Systems::displayNumber($value['quantity_issued']); ?></td>
-                                        <td align="right"><?php echo Systems::displayNumber($value['quantity_issued'] - $value['quantity_production']); ?></td>
-                                        <td align="right"><?php echo Systems::displayNumber($value['quantity_returned']); ?></td>
-                                        <td align="right"><?php echo Systems::displayNumber($value['quantity_returned'] - ($value['quantity_issued'] - $value['quantity_production'])); ?></td>
-                                    </tr>
-                                    <?php $k++;
-                                } ?>
+                                <tr>
+                                    <td align="right">
+                                        <?php if ($this->itemsList['total']) { ?>
+                                            <a href="<?php echo Link::createAdmin_current(array('outsource_number' => $this->itemsList['outsource_id_list'] ))?>" target="_blank"><?php echo $this->itemsList['total']; ?></a>
+                                        <?php } else {
+                                            echo '0';
+                                        } ?>
+                                    </td>
+                                    <td align="right">
+                                        <?php if ($this->itemsList['order_on_time']) { ?>
+                                            <a href="<?php echo Link::createAdmin_current(array('outsource_number' => $this->itemsList['ontime_id_list'] ))?>" target="_blank"><?php echo $this->itemsList['order_on_time']; ?></a>
+                                        <?php } else {
+                                            echo '0';
+                                        } ?>
+                                    </td>
+                                    <td align="right">
+                                        <?php if ($this->itemsList['order_delayed']) { ?>
+                                            <a href="<?php echo Link::createAdmin_current(array('outsource_number' => $this->itemsList['delay_id_list'] ))?>" target="_blank"><?php echo $this->itemsList['order_delayed']; ?></a>
+                                        <?php } else {
+                                            echo '0';
+                                        } ?> <?php if ($this->itemsList['order_delayed']) { ?>(<?php echo $this->itemsList['day_delay']; ?> {{.day.}})<?php } ?>
+                                    </td>
+                                </tr>
                             <?php } else { ?>
                                 <tr>
                                     <td colspan="11" align="center">{{.no_data.}}</td>
@@ -308,14 +107,6 @@
                     </table>
                 </form>
             </div>
-            <table cellspacing="1" cellpadding="4" class="admintable">
-                <tbody>
-                    <tr>
-                        <td><?php echo ($this->pagingList ? $this->pagingList : ''); ?></td>
-                        <td align="right">{{.total.}}: <font color="Brown"><span><?php echo $this->totalRecord; ?></span></font> {{.record.}} / <?php echo $this->totalPage; ?> {{.page.}}</td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </div>
     <div class="toolboxButton">

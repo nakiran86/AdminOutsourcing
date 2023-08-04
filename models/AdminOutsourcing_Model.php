@@ -600,4 +600,19 @@ class AdminOutsourcing_Model extends Model {
             ');
     }
 
+    public function getStatisticOutsourcing($cond) {
+        return $this->db->selectAll('
+            SELECT
+                tbl_outsourcing.id,
+                tbl_outsourcing.date_out,
+                tbl_outsourcing.expired_date,
+                tbl_outsourcing.time_finished,
+                tbl_outsourcing.`status`
+            FROM
+                tbl_outsourcing
+            WHERE
+                tbl_outsourcing.`status` <> "DELETED"' . $cond . '
+        ');
+    }
+
 }

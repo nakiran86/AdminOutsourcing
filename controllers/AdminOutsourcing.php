@@ -577,6 +577,7 @@ class AdminOutsourcing extends Controller {
         $this->view->totalPage = $this->view->totalPage($this->view->totalRecord, $pagesize);
         $this->view->pagingList = $this->view->paging($this->view->totalRecord, $pagesize, FALSE);
         $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
+        $this->view->subMenuList = array_merge($this->view->subMenuList, array('10' => array('id' => 10, 'name' => $this->view->renderLabel('statistic_outsourcing'), 'url' => Link::createAdmin_current(array('cmd' => 'statisticOutsourcing')))));
         $this->view->itemList = $this->model->getList($cond, $start, $pagesize);
         foreach ($this->view->itemList as $key => $item) {
             $this->view->itemList[$key]['create_time'] = date("H:i:s d/m/Y", $item['create_time']);
@@ -646,6 +647,7 @@ class AdminOutsourcing extends Controller {
                 }
                 $this->view->item['accountant_name'] = $userList[$this->view->item['user_create_id']]['fullname'];
                 $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
+                $this->view->subMenuList = array_merge($this->view->subMenuList, array('10' => array('id' => 10, 'name' => $this->view->renderLabel('statistic_outsourcing'), 'url' => Link::createAdmin_current(array('cmd' => 'statisticOutsourcing')))));
                 $this->view->proList = $this->model->productOutsourceList($id);
 
                 $this->view->itemList = $this->model->getStockOutByOutsource($id);
@@ -796,6 +798,7 @@ class AdminOutsourcing extends Controller {
         }
         Page::$title = $this->view->renderLabel('outsourcing_order_statistics');
         $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
+        $this->view->subMenuList = array_merge($this->view->subMenuList, array('10' => array('id' => 10, 'name' => $this->view->renderLabel('statistic_outsourcing'), 'url' => Link::createAdmin_current(array('cmd' => 'statisticOutsourcing')))));
         if (Link::get('from_date') || Link::get('to_date')) {
             $pagesize = (Link::get('pagesize') > 0) ? Link::get('pagesize') : 50;
             $start = ($this->view->page_no() - 1) * $pagesize;
@@ -895,6 +898,7 @@ class AdminOutsourcing extends Controller {
         }
         Page::$title = $this->view->renderLabel('add_new') . ' ' . $this->view->renderLabel('outsourcing_order');
         $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
+        $this->view->subMenuList = array_merge($this->view->subMenuList, array('10' => array('id' => 10, 'name' => $this->view->renderLabel('statistic_outsourcing'), 'url' => Link::createAdmin_current(array('cmd' => 'statisticOutsourcing')))));
         $content = $this->view->render('adminoutsourcing/edit', array('error' => $this->view->error, 'subMenuList' => $this->view->subMenuList), 'plugins/AdminOutsourcing/');
         return $content;
     }
@@ -914,6 +918,7 @@ class AdminOutsourcing extends Controller {
             if ($this->view->item['status'] != 'FINISHED' && $this->view->item['status'] != 'DELETED') {
                 if ($this->view->item) {
                     $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
+                    $this->view->subMenuList = array_merge($this->view->subMenuList, array('10' => array('id' => 10, 'name' => $this->view->renderLabel('statistic_outsourcing'), 'url' => Link::createAdmin_current(array('cmd' => 'statisticOutsourcing')))));
                     $this->view->proList = $this->model->productOutsourceList($id);
                     foreach ($this->view->item as $key => $value) {
                         if (is_string($value) and !Link::getPost($key)) {
@@ -1783,60 +1788,64 @@ class AdminOutsourcing extends Controller {
         }
         Page::$title = $this->view->renderLabel('outsourcing_order_statistics');
         $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
-
+        $this->view->subMenuList = array_merge($this->view->subMenuList, array('10' => array('id' => 10, 'name' => $this->view->renderLabel('statistic_outsourcing'), 'url' => Link::createAdmin_current(array('cmd' => 'statisticOutsourcing')))));
+        $cond = '';
         if (Link::get('cbMonth') && Link::get('cbYear')) {
-            $yearMonth = Link::get('cbYear') . ( Link::get('cbMonth') > 9 ?  Link::get('cbMonth') : '0' .  Link::get('cbMonth'));
-            $fdOfMonth = Link::get('cbYear') . '-' . (Link::get('cbMonth') < 10 ? '0' . Link::get('cbMonth') : Link::get('cbMonth')) . '-01';
-            $ldOfMonth = date('Y-m-t', strtotime($fdOfMonth));
+            $yearMonth = Link::get('cbYear') . (Link::get('cbMonth') > 9 ? Link::get('cbMonth') : '0' . Link::get('cbMonth'));
         } else {
             $yearMonth = date('Ym');
-            $fdOfMonth = date('Y-m-01');
-            $ldOfMonth = date('Y-m-t');
         }
-
-        if (Link::get('from_date') || Link::get('to_date')) {
-            $pagesize = (Link::get('pagesize') > 0) ? Link::get('pagesize') : 50;
-            $start = ($this->view->page_no() - 1) * $pagesize;
-            $cond = '';
-            if (Link::get('from_date')) {
-                $cond .= ' AND `tbl_stockout_local`.`date_out` >= "' . Systems::displaySqlDate(Link::get('from_date')) . '"';
+        $cond .= ' AND DATE_FORMAT(tbl_outsourcing.date_out,"%Y%m") = "' . $yearMonth . '"';
+        $this->view->itemsList = array();
+        $getStatisticOutsourcing = $this->model->getStatisticOutsourcing($cond);
+        $countDayBz = new BusinessTimeCalc();
+        $total = $orderOnTime = $orderDelayed = $dayDelay = 0;
+        $outsourceIdList = $ontimeIdList = $delayIdList = '';
+        foreach ($getStatisticOutsourcing as $key => $value) {
+            $total++;
+            if (empty($outsourceIdList)) {
+                $outsourceIdList = $key;
+            } else {
+                $outsourceIdList .= ', ' . $key;
             }
-            if (Link::get('to_date')) {
-                $cond .= ' AND `tbl_stockout_local`.`date_out` <= "' . Systems::displaySqlDate(Link::get('to_date')) . '"';
+            if ($value['status'] == 'FINISHED') {
+                if ($value['time_finished'] <= $value['expired_date']) {
+                    $orderOnTime++;
+                    if (empty($ontimeIdList)) {
+                        $ontimeIdList = $key;
+                    } else {
+                        $ontimeIdList .= ', ' . $key;
+                    }
+                } else {
+                    $orderDelayed++;
+                    if (empty($delayIdList)) {
+                        $delayIdList = $key;
+                    } else {
+                        $delayIdList .= ', ' . $key;
+                    }
+                    $dayDelay += $countDayBz->countDayWorking(Systems::displayVnDate($value['expired_date']), date('d/m/Y'), true);
+                }
+            } else {
+                if ($value['expired_date'] < date('Y-m-d')) {
+                    $orderDelayed++;
+                    if (empty($delayIdList)) {
+                        $delayIdList = $key;
+                    } else {
+                        $delayIdList .= ', ' . $key;
+                    }
+                    $dayDelay += $countDayBz->countDayWorking(Systems::displayVnDate($value['expired_date']), date('d/m/Y'), true);
+                }
             }
-            // $total_record = $this->model->getTotalStatisticRecord($cond);
-            // $this->view->totalRecord = $total_record['total_record'];
-            // $this->view->totalPage = $this->view->totalPage($this->view->totalRecord, $pagesize);
-            // $this->view->pagingList = $this->view->paging($this->view->totalRecord, $pagesize, FALSE);
-            $this->view->itemsList = $this->model->getListStatistic($cond, $start, $pagesize);
-            // $outsourceIdList = $this->model->getListOutsourceByProductId($cond . ' AND tbl_stockout_local_product.item_id IN ("' . implode('","', array_keys($this->view->itemsList)) . '")');
-            // $itemsProductionList = $this->model->getListQuantityProduction(' AND tbl_outsourcing_product.outsourcing_id IN ("' . implode('","', array_keys($outsourceIdList)) . '")');
-            // $stockoutIdList = $this->model->getListLocalStockOutId(' AND tbl_stockout_local.outsourcing_id IN ("' . implode('","', array_keys($outsourceIdList)) . '")');
-            // $itemsReturnedList = $this->model->getListStatisticReturnList(' AND tbl_local_returned.stock_out_local_id IN ("' . implode('","', array_keys($stockoutIdList)) . '")');
-
-            foreach ($this->view->itemsList as $value) {
-                // if (isset($itemsProductionList[$value['id']])) {
-                //     $this->view->itemsList[$value['id']]['quantity_production'] = Systems::displayFloatNumber($itemsProductionList[$value['id']]['quantity_production']);
-                // } else {
-                //     $this->view->itemsList[$value['id']]['quantity_production'] = 0;
-                // }
-                // if (isset($itemsReturnedList[$value['id']])) {
-                //     $this->view->itemsList[$value['id']]['quantity_returned'] = Systems::displayFloatNumber($itemsReturnedList[$value['id']]['quantity_returned']);
-                // } else {
-                //     $this->view->itemsList[$value['id']]['quantity_returned'] = 0;
-                // }
-            }
-        } else {
-            $this->view->totalRecord = 0;
-            $this->view->totalPage = 0;
-            $this->view->pagingList = '';
-            $this->view->itemsList = array();
         }
+        $this->view->itemsList['total'] = $total;
+        $this->view->itemsList['outsource_id_list'] = $outsourceIdList;
+        $this->view->itemsList['order_on_time'] = $orderOnTime;
+        $this->view->itemsList['ontime_id_list'] = $ontimeIdList;
+        $this->view->itemsList['order_delayed'] = $orderDelayed;
+        $this->view->itemsList['day_delay'] = $dayDelay - 1;
+        $this->view->itemsList['delay_id_list'] = $delayIdList;
         $content = $this->view->render('adminoutsourcing/statistic_outsourcing', array(
             'subMenuList' => $this->view->subMenuList,
-            'totalRecord' => $this->view->totalRecord,
-            'totalPage' => $this->view->totalPage,
-            'pagingList' => $this->view->pagingList,
             'itemsList' => $this->view->itemsList
         ), 'plugins/AdminOutsourcing/');
         return $content;

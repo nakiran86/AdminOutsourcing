@@ -580,6 +580,10 @@ class AdminOutsourcing extends Controller {
         $this->view->itemList = $this->model->getList($cond, $start, $pagesize);
         foreach ($this->view->itemList as $key => $item) {
             $this->view->itemList[$key]['create_time'] = date("H:i:s d/m/Y", $item['create_time']);
+            $this->view->itemList[$key]['time_complete_date'] = '';
+            if ($item['time_complete']) {
+                $this->view->itemList[$key]['time_complete_date'] = date("H:i:s d/m/Y", $item['time_complete']);
+            }
             $this->view->itemList[$key]['accountant_name'] = $userList[$item['user_create_id']]['fullname'];
             $this->view->itemList[$key]['outsource_number'] = $item['id'];
             $this->view->itemList[$key]['handler_list_name'] = $this->view->renderLabel('none_user');
@@ -641,7 +645,7 @@ class AdminOutsourcing extends Controller {
                     $this->view->item['handler_list_arr'] = $handlerIdList;
                 }
                 $this->view->item['store_dept_edit'] = false;
-                if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'lock') && in_array('STORE', Session::get('group'))) {
+                if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'lock') && in_array('STORE', Session::get('group')) && $this->view->item['status'] == 'PENDING') {
                     $this->view->item['store_dept_edit'] = true;
                 }
                 $this->view->item['accountant_name'] = $userList[$this->view->item['user_create_id']]['fullname'];
@@ -1773,6 +1777,53 @@ class AdminOutsourcing extends Controller {
         }
         Link::redirectAdminCurrent();
     }
+
+
+    /**
+     * Summary of confirmComplete
+     * @param mixed $id
+     * @return never
+     */
+    public function confirmComplete($id = '') {
+        if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'lock') && in_array('STORE', Session::get('group'))) {
+            $id = Link::get('id');
+            if (is_numeric($id)) {
+                $records = Link::getPost('records');
+                $strMod = '';
+                $currentItem = $this->model->itemSingleList($id);
+                if ($currentItem) {
+                    if ($currentItem['status'] == 'PENDING') {
+                        $data['id'] = $id;
+                        $data['time_complete'] = time();
+                        $modify = $currentItem['log'];
+                        foreach ($records as $field => $record) {
+                            if ($currentItem[$field] != $record) {
+                                $data['handler_id_list'] = '|' . implode('|', $records['handler_id_list']) . '|';
+                                $data['num_hours'] = $records['num_hours'];
+                                $strMod .= " - ACTION: COMFIRM COMPLETE\n";
+                                $strMod .= ' - Old ' . $field . ': ' . $currentItem[$field] . "\n";
+                                $strMod .= '   New ' . $field . ': ' . $record . "\n";
+                            }
+                        }
+                        if ($strMod) {
+                            $modify .= ' * Date: ' . date('d/m/Y H:i:s') . ":\n";
+                            $modify .= ' - User: ' . Session::get('user_fullname') . ' - ' . Session::get('user_id') . "\n";
+                            // $this->model->editSave('tbl_outsourcing', array('id' => $id, 'time_complete' => time(), 'log' => $itemConfirm));
+                            // unset($itemConfirm);
+                            $data['log'] = $modify;
+                            $this->model->editSave('tbl_outsourcing', $data);
+                        }
+                    }
+                }
+            }
+        }
+        Link::redirectAdminCurrent();
+    }
+
+    /**
+     * Summary of statisticOutsourcing
+     * @return mixed
+     */
     public function statisticOutsourcing() {
         if (!$this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'admin')) {
             Link::accessDenied();

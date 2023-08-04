@@ -29,6 +29,7 @@ class AdminOutsourcing_Model extends Model {
                 tbl_outsourcing.note,
                 tbl_outsourcing.handler_id_list,
                 tbl_outsourcing.num_hours,
+                tbl_outsourcing.time_complete,
                 tbl_outsourcing.warehouse_note,
                 tbl_outsourcing.time_warehouse_note,
                 tbl_outsourcing.create_time,

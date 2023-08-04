@@ -242,6 +242,7 @@
                             <th class="col_100">{{.handler.}}</th>
                             <th class="col_50">{{.number_hours_performed.}}</th>
                             <th class="col_50">{{.warehouse_note.}}</th>
+                            <th class="col_50">{{.date_completed.}}</th>
                             <th class="col_80">&nbsp;</th>
                         </tr>
                     </thead>
@@ -270,6 +271,7 @@
                                 <td align="center"><?php echo $value['handler_list_name']; ?></td>
                                 <td align="center"><?php echo $value['num_hours']; ?></td>
                                 <td align="center"><?php echo $value['warehouse_note']; ?></td>
+                                <td align="center"><?php echo $value['time_complete_date']; ?></td>
                                 <td align="center">
                                     <div id="button<?php echo $value['id']; ?>">
                                         <?php if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'edit') && in_array($value['status'], array('PENDING', 'APPROVED'))) { ?>

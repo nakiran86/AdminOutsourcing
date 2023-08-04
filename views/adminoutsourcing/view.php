@@ -96,6 +96,7 @@
                         <?php if ($this->item['store_dept_edit']) { ?>
                         <td align="center">
                             <a href="javascript:void(0);" class="toolbar" title="{{.save.}}" onclick="action('frmAdminItemEdit', 'storeDeptSave');"><span class="icon-button Icon-32-Save" title="{{.save.}}"></span>{{.save.}}</a>
+                            <a href="javascript:void(0);" class="toolbar" title="{{.confirm.}}" onclick="javascript:if(confirm('{{.are_you_sure_want_to_confirm_this_item.}}')){window.location.href='<?php echo Link::createAdmin_current(array('cmd' => 'confirmComplete', 'id' => Link::get('id'))); ?>';}"><span class="icon-button Icon-32-Apply" title="{{.save.}}"></span>{{.confirm.}}</a>
                         </td>
                         <?php }
                         if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'print')) { ?>
@@ -523,6 +524,7 @@
                         <?php if ($this->item['store_dept_edit']) { ?>
                         <td align="center">
                             <a href="javascript:void(0);" class="toolbar" title="{{.save.}}" onclick="action('frmAdminItemEdit', 'storeDeptSave');"><span class="icon-button Icon-32-Save" title="{{.save.}}"></span>{{.save.}}</a>
+                            <a href="javascript:void(0);" class="toolbar" title="{{.confirm.}}" onclick="confirmAction('frmAdminItemEdit', 'confirmComplete', '{{.are_you_sure_want_to_confirm_this_item.}}');"><span class="icon-button Icon-32-Apply" title="{{.save.}}"></span>{{.confirm.}}</a>
                         </td>
                         <?php }
                         if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'print')) { ?>

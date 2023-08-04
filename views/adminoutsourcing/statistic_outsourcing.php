@@ -39,7 +39,7 @@
                     <table cellspacing="1" cellpadding="4" class="admintable search" align="center">
                         <tbody>
                             <tr>
-                                <td class="key">{{.col_date_import.}}</td>
+                                <td class="key">{{.month.}}</td>
                                 <td>
                                     <select id="cbMonth" name="cbMonth">
                                         <?php for ($month = 1; $month <= 12; $month++) { ?>
@@ -78,24 +78,24 @@
                                 <tr>
                                     <td align="right">
                                         <?php if ($this->itemsList['total']) { ?>
-                                            <a href="<?php echo Link::createAdmin_current(array('outsource_number' => $this->itemsList['outsource_id_list'] ))?>" target="_blank"><?php echo $this->itemsList['total']; ?></a>
+                                            <a href="<?php echo Link::createAdmin_current(array('outsource_number' => $this->itemsList['outsource_id_list'])) ?>" target="_blank"><?php echo $this->itemsList['total']; ?></a>
                                         <?php } else {
                                             echo '0';
                                         } ?>
                                     </td>
                                     <td align="right">
                                         <?php if ($this->itemsList['order_on_time']) { ?>
-                                            <a href="<?php echo Link::createAdmin_current(array('outsource_number' => $this->itemsList['ontime_id_list'] ))?>" target="_blank"><?php echo $this->itemsList['order_on_time']; ?></a>
+                                            <a href="<?php echo Link::createAdmin_current(array('outsource_number' => $this->itemsList['ontime_id_list'])) ?>" target="_blank"><?php echo $this->itemsList['order_on_time']; ?></a>
                                         <?php } else {
                                             echo '0';
                                         } ?>
                                     </td>
                                     <td align="right">
                                         <?php if ($this->itemsList['order_delayed']) { ?>
-                                            <a href="<?php echo Link::createAdmin_current(array('outsource_number' => $this->itemsList['delay_id_list'] ))?>" target="_blank"><?php echo $this->itemsList['order_delayed']; ?></a>
+                                            <a href="<?php echo Link::createAdmin_current(array('outsource_number' => $this->itemsList['delay_id_list'])) ?>" target="_blank"><?php echo $this->itemsList['order_delayed']; ?></a>
                                         <?php } else {
                                             echo '0';
-                                        } ?> <?php if ($this->itemsList['order_delayed']) { ?>(<?php echo $this->itemsList['day_delay']; ?> {{.day.}})<?php } ?>
+                                        } ?>     <?php if ($this->itemsList['order_delayed']) { ?>(<?php echo $this->itemsList['day_delay']; ?> {{.day.}})<?php } ?>
                                     </td>
                                 </tr>
                             <?php } else { ?>

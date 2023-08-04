@@ -44,7 +44,6 @@ class AdminOutsourcing extends Controller {
         $data_post = $this->form->fetch();
         if (!$this->form->submit()) {
             throw new Exception($this->form->displayError());
-            return false;
         }
         $data = array();
 
@@ -1064,20 +1063,16 @@ class AdminOutsourcing extends Controller {
                                 }
                             } else {
                                 throw new Exception($this->view->renderLabel('invalid_product_withdrawal_list'));
-                                return FALSE;
                             }
                         } else {
                             throw new Exception($errors);
-                            return FALSE;
                         }
                         Link::redirectAdminCurrent();
                     } else {
                         throw new Exception($this->view->renderLabel('invalid_product_withdrawal_list'));
-                        return FALSE;
                     }
                 } else {
                     throw new Exception($this->view->renderLabel('invalid_buyer_company'));
-                    return FALSE;
                 }
             }
         } catch (Exception $exc) {
@@ -1572,20 +1567,16 @@ class AdminOutsourcing extends Controller {
                                     }
                                 } else {
                                     throw new Exception($this->view->renderLabel('invalid_product_withdrawal_list'));
-                                    return FALSE;
                                 }
                             } else {
                                 throw new Exception($errors);
-                                return FALSE;
                             }
                             Link::redirectAdminCurrent();
                         } else {
                             throw new Exception($this->view->renderLabel('invalid_product_withdrawal_list'));
-                            return FALSE;
                         }
                     } else {
                         throw new Exception($this->view->renderLabel('invalid_buyer_company'));
-                        return FALSE;
                     }
                 } else {
                     Link::redirectAdminCurrent();

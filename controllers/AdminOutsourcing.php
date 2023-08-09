@@ -1761,6 +1761,9 @@ class AdminOutsourcing extends Controller {
                     $data['time_warehouse_note'] = time();
                 }
                 foreach ($records as $field => $record) {
+                    if ($field == 'handler_id_list') {
+                        $record = '|' . implode('|', $record) . '|';
+                    }
                     if ($currentItem[$field] != $record) {
                         $strMod .= " - ACTION: Edit $field\n";
                         $strMod .= ' - Old ' . $field . ': ' . $currentItem[$field] . "\n";
@@ -1786,34 +1789,15 @@ class AdminOutsourcing extends Controller {
      */
     public function confirmComplete($id = '') {
         if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'lock') && in_array('STORE', Session::get('group'))) {
-            $id = Link::get('id');
             if (is_numeric($id)) {
-                $records = Link::getPost('records');
-                $strMod = '';
-                $currentItem = $this->model->itemSingleList($id);
+                $currentItem = $this->model->itemSingleList($id, ' AND tbl_outsourcing.`status` = "PENDING" AND tbl_outsourcing.time_complete = "0"');
                 if ($currentItem) {
-                    if ($currentItem['status'] == 'PENDING') {
-                        $data['id'] = $id;
-                        $data['time_complete'] = time();
-                        $modify = $currentItem['log'];
-                        foreach ($records as $field => $record) {
-                            if ($currentItem[$field] != $record) {
-                                $data['handler_id_list'] = '|' . implode('|', $records['handler_id_list']) . '|';
-                                $data['num_hours'] = $records['num_hours'];
-                                $strMod .= " - ACTION: COMFIRM COMPLETE\n";
-                                $strMod .= ' - Old ' . $field . ': ' . $currentItem[$field] . "\n";
-                                $strMod .= '   New ' . $field . ': ' . $record . "\n";
-                            }
-                        }
-                        if ($strMod) {
-                            $modify .= ' * Date: ' . date('d/m/Y H:i:s') . ":\n";
-                            $modify .= ' - User: ' . Session::get('user_fullname') . ' - ' . Session::get('user_id') . "\n";
-                            // $this->model->editSave('tbl_outsourcing', array('id' => $id, 'time_complete' => time(), 'log' => $itemConfirm));
-                            // unset($itemConfirm);
-                            $data['log'] = $modify;
-                            $this->model->editSave('tbl_outsourcing', $data);
-                        }
-                    }
+                    $itemConfirm = $currentItem['log'];
+                    $itemConfirm .= ' * Date: ' . date('d/m/Y H:i:s') . ":\n";
+                    $itemConfirm .= " - ACTION: COMFIRM COMPLETE\n";
+                    $itemConfirm .= ' - User: ' . Session::get('user_fullname') . ' - ' . Session::get('user_id') . "\n";
+                    $this->model->editSave('tbl_outsourcing', array('id' => $id, 'time_complete' => time(), 'log' => $itemConfirm));
+                    unset($itemConfirm);
                 }
             }
         }

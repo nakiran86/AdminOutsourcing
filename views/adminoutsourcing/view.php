@@ -22,52 +22,15 @@
             $('div#no' + rowid).html('<a href="javascript:void(0);" onclick="showHideMaterial(\'' + rowid + '\', \'show\');" title="{{.show_material.}}"><span class="icon-button-16 Icon-16-Expand" title="{{.show_material.}}"><\/span><\/a>');
         }
     }
-
-    function editField(id, value, field) {
-        if (field == 'handler_id_list') {
-            // $('#' + field + '_input_' + id).html('<input type = "text" name = "e_' + field + '_' + id + '" id = "e_' + field + '_' + id + '" value = "' + value + '" style = "width:60px" \/>');
-            $('#' + field + '_input_' + id).html('<input type="checkbox" onclick="chkAllCheckboxes(\'chkAll\', \'clsUser\');" id="chkAllclsUser" \/><label for="chkAllclsUser">{{.all.}}<\/label> <?php foreach ($this->allStoreUserList as $user) { ?> <span class="text-nowrap" style="display: inline-block; padding: 3px;"> <input type="checkbox" name="handler_id_list[]" id="e_' + field + '_' + id + '_<?php echo $user['id']; ?>" class="clsUser" value="<?php echo $user['id']; ?>" \/> <label for="e_' + field + '_' + id + '_<?php echo $user['id']; ?>"><?php echo $user['fullname']; ?> <\/label> <\/span> <?php } ?>');
-        } else if (field == 'num_hours') {
-            $('#' + field + '_input_' + id).html('<input type = "number" name = "e_' + field + '_' + id + '" id = "e_' + field + '_' + id + '" value = "' + value + '" min=0  style = "width:60px" \/>');
-        } else if (field == 'warehouse_note') {
-            $('#' + field + '_input_' + id).html('<textarea name = "e_' + field + '_' + id + '" id = "e_' + field + '_' + id + '" style="width: 30%; height: 60px;">' + value + '<\/textarea>');
-        }
-        $('#button_' + field + id).html('<a href="javascript:void(0);" id="button_save_' + field + id + '" onclick="saveField(\'' + id + '\', \'' + field + '\');" title="{{.save.}}" class="btn btn-primary"><i class="fa fa-save"><\/i> {{.save.}}<\/a><a href="javascript:void(0);" onclick="cancelChange(\'' + id + '\', \'' + value + '\', \'' + field + '\')" id="button_cancel_' + field + id + '" title="{{.cancel.}}" class="btn btn-red"><i class="fa fa-remove"></i>&nbsp;{{.cancel.}}<\/a><script>$("#e_' + field + '_' + id + '").focus();<\/script>');
+<?php if ($this->item['store_dept_edit']) { ?>
+    function editField() {
+        $("#item_handler_list").html('<input type="hidden" name="records[id]" id="records_id" value="<?php echo $this->item['id']; ?>" />\
+                                        <input type="checkbox" onclick="chkAllCheckboxes(\'chkAll\', \'clsUser\');" id="chkAllclsUser" /><label for="chkAllclsUser">{{.all.}}</label>\
+                                        <?php foreach ($this->allStoreUserList as $user) { ?> <span class="text-nowrap" style="display: inline-block; padding: 3px;"> <input type="checkbox" name="records[handler_id_list][]" id="records_handler_id_list_<?php echo $user['id']; ?>" class="clsUser" value="<?php echo $user['id']; ?>" <?php echo in_array($user['id'], $this->item['handler_list_arr']) ? 'checked="checked"' : ''; ?> \/> <label for="records_handler_id_list_<?php echo $user['id']; ?>"><?php echo $user['fullname']; ?> <\/label> <\/span> <?php } ?>');
+        $("#item_num_hours").html('<input type="number" name="records[num_hours]" id="records_num_hours" value="<?php echo $this->item['num_hours']; ?>" min=0 style = "width:60px" \/>');
+        $("#item_warehouse_note").html('<textarea name="records[warehouse_note]" id="records_warehouse_note" style="width: 30%; height: 60px;"><?php echo $this->item['warehouse_note']; ?><\/textarea>');
     }
-
-    function cancelChange(id, value, field) {
-        $('#' + field + '_input_' + id).html(value);
-        $("#button_" + field + id).html('<a href="javascript:void(0);" onclick="editField(' + id + ', \`' + value + '\`, \'' + field + '\');" title="{{.edit.}}" class="list-button">{{.edit.}}<\/a');
-    }
-    function saveField(id, field) {
-        if (field == 'handler_id_list') {
-            var handler = [];
-            $('#' + field + '_input_' + id + ' .clsUser').each(function() {
-                if (this.checked) {
-                    handler.push(this.value);
-                }
-            })
-            var valueField = JSON.stringify(handler);
-        } else {
-            var valueField = $('#e_' + field + '_' + id).val();
-        }
-        $.ajax({
-            url: '<?php echo Link::createAdmin_current(); ?>',
-            data: {
-                cmd: 'ajaxSaveField',
-                id: id,
-                field: field,
-                value: valueField
-            },
-            beforeSend: function() {
-                $("#button_save_" + field + id + ' i').addClass('fa-spinner fa-spin');
-            },
-            success: function(dataResult) {
-                $('#' + field + '_input_' + id).html(dataResult);
-                $('#button_' + field + id).html('<a href="javascript:void(0);" onclick="editField(' + id + ', \`' + dataResult + '\`, \'' + field + '\');" title="{{.edit.}}" class="list-button">{{.edit.}}<\/a>');
-            }
-        });
-    }
+<?php } ?>
 </script>
 <div class="content-wrapper">
     <div class="path">
@@ -95,8 +58,11 @@
                     <tr>
                         <?php if ($this->item['store_dept_edit']) { ?>
                         <td align="center">
+                            <a href="javascript:void(0);" class="toolbar" onclick="editField();" title="{{.edit.}}"><span class="icon-button Icon-32-Edit"></span>{{.edit.}}</a>
                             <a href="javascript:void(0);" class="toolbar" title="{{.save.}}" onclick="action('frmAdminItemEdit', 'storeDeptSave');"><span class="icon-button Icon-32-Save" title="{{.save.}}"></span>{{.save.}}</a>
+                            <?php if (!$this->item['time_complete'] && $this->item['num_hours']) { ?>
                             <a href="javascript:void(0);" class="toolbar" title="{{.confirm.}}" onclick="javascript:if(confirm('{{.are_you_sure_want_to_confirm_this_item.}}')){window.location.href='<?php echo Link::createAdmin_current(array('cmd' => 'confirmComplete', 'id' => Link::get('id'))); ?>';}"><span class="icon-button Icon-32-Apply" title="{{.save.}}"></span>{{.confirm.}}</a>
+                            <?php } ?>
                         </td>
                         <?php }
                         if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'print')) { ?>
@@ -207,36 +173,25 @@
                             <tr>
                                 <td class="key">{{.handler.}}</td>
                                 <td>
-                                    <?php if ($this->item['store_dept_edit']) { ?>
-                                        <input type="hidden" name="records[id]" id="records_id" value="<?php echo $this->item['id']; ?>" />
-                                        <input type="checkbox" onclick="chkAllCheckboxes('chkAll', 'clsUser');" id="chkAllclsUser" /><label for="chkAllclsUser">{{.all.}}</label>
-                                        <?php foreach ($this->allStoreUserList as $user) { ?>
-                                            <span class="text-nowrap" style="display: inline-block; padding: 3px;"> <input type="checkbox" name="records[handler_id_list][]" id="records_handler_id_list_<?php echo $user['id']; ?>" class="clsUser" value="<?php echo $user['id']; ?>" <?php echo in_array($user['id'], $this->item['handler_list_arr']) ? 'checked="checked"' : ''; ?> /> <label for="records_handler_id_list_<?php echo $user['id']; ?>"><?php echo $user['fullname']; ?> </label> </span>
-                                        <?php } ?>
-                                    <?php } else { ?>
+                                    <div id="item_handler_list">
                                         <?php echo $this->item['handler_list_name']; ?>
-                                    <?php } ?>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="key">{{.number_hours_performed.}}</td>
                                 <td>
-
-                                    <?php if ($this->item['store_dept_edit']) { ?>
-                                        <input type="number" name="records[num_hours]" id="records_num_hours" value="<?php echo $this->item['num_hours']; ?>" min=0  style = "width:60px" />
-                                    <?php } else { ?>
-                                        <?php echo $this->item['num_hours']; ?>
-                                    <?php } ?>
+                                    <div id="item_num_hours">
+                                        <?php echo $this->item['num_hours']; ?> {{.hour.}}
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="key">{{.warehouse_note.}}</td>
                                 <td>
-                                    <?php if ($this->item['store_dept_edit']) { ?>
-                                        <textarea name="records[warehouse_note]" id="records_warehouse_note" style="width: 30%; height: 60px;"><?php echo $this->item['warehouse_note']; ?></textarea>
-                                    <?php } else { ?>
+                                    <div id="item_warehouse_note">
                                         <?php echo $this->item['warehouse_note']; ?>
-                                    <?php } ?>
+                                    </div>
                                 </td>
                             </tr>
                             <?php if ($this->item['time_warehouse_note']) { ?>
@@ -523,8 +478,11 @@
                     <tr>
                         <?php if ($this->item['store_dept_edit']) { ?>
                         <td align="center">
+                            <a href="javascript:void(0);" class="toolbar" onclick="editField();" title="{{.edit.}}"><span class="icon-button Icon-32-Edit"></span>{{.edit.}}</a>
                             <a href="javascript:void(0);" class="toolbar" title="{{.save.}}" onclick="action('frmAdminItemEdit', 'storeDeptSave');"><span class="icon-button Icon-32-Save" title="{{.save.}}"></span>{{.save.}}</a>
-                            <a href="javascript:void(0);" class="toolbar" title="{{.confirm.}}" onclick="confirmAction('frmAdminItemEdit', 'confirmComplete', '{{.are_you_sure_want_to_confirm_this_item.}}');"><span class="icon-button Icon-32-Apply" title="{{.save.}}"></span>{{.confirm.}}</a>
+                            <?php if (!$this->item['time_complete'] && $this->item['num_hours']) { ?>
+                            <a href="javascript:void(0);" class="toolbar" title="{{.confirm.}}" onclick="javascript:if(confirm('{{.are_you_sure_want_to_confirm_this_item.}}')){window.location.href='<?php echo Link::createAdmin_current(array('cmd' => 'confirmComplete', 'id' => Link::get('id'))); ?>';}"><span class="icon-button Icon-32-Apply" title="{{.save.}}"></span>{{.confirm.}}</a>
+                            <?php } ?>
                         </td>
                         <?php }
                         if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'print')) { ?>

@@ -57,14 +57,18 @@
                 <tbody>
                     <tr>
                         <?php if ($this->item['store_dept_edit']) { ?>
-                        <td align="center">
-                            <a href="javascript:void(0);" class="toolbar" onclick="editField();" title="{{.edit.}}"><span class="icon-button Icon-32-Edit"></span>{{.edit.}}</a>
-                            <a href="javascript:void(0);" class="toolbar" title="{{.save.}}" onclick="action('frmAdminItemEdit', 'storeDeptSave');"><span class="icon-button Icon-32-Save" title="{{.save.}}"></span>{{.save.}}</a>
+                            <td align="center">
+                                <a href="javascript:void(0);" class="toolbar" onclick="editField();" title="{{.edit.}}"><span class="icon-button Icon-32-Edit"></span>{{.edit.}}</a>
+                            </td>
+                            <td align="center">
+                                <a href="javascript:void(0);" class="toolbar" title="{{.save.}}" onclick="action('frmAdminItemEdit', 'storeDeptSave');"><span class="icon-button Icon-32-Save" title="{{.save.}}"></span>{{.save.}}</a>
+                            </td>
                             <?php if (!$this->item['time_complete'] && $this->item['num_hours']) { ?>
-                            <a href="javascript:void(0);" class="toolbar" title="{{.confirm.}}" onclick="javascript:if(confirm('{{.are_you_sure_want_to_confirm_this_item.}}')){window.location.href='<?php echo Link::createAdmin_current(array('cmd' => 'confirmComplete', 'id' => Link::get('id'))); ?>';}"><span class="icon-button Icon-32-Apply" title="{{.save.}}"></span>{{.confirm.}}</a>
-                            <?php } ?>
-                        </td>
-                        <?php }
+                                <td align="center">
+                                    <a href="javascript:void(0);" class="toolbar" title="{{.confirm.}}" onclick="javascript:if(confirm('{{.are_you_sure_want_to_confirm_this_item.}}')){window.location.href='<?php echo Link::createAdmin_current(array('cmd' => 'confirmComplete', 'id' => Link::get('id'))); ?>';}"><span class="icon-button Icon-32-Apply" title="{{.confirm.}}"></span>{{.confirm.}}</a>
+                                </td>
+                            <?php }
+                        }
                         if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'print')) { ?>
                             <td align="center">
                                 <a href="javascript:void(0);" class="toolbar" title="{{.print.}}" onclick="javascript:window.open('<?php echo Link::createAdmin_current(array('cmd' => 'printer', 'id' => Link::get('id'))); ?>');"><span class="icon-button Icon-32-Print" title="{{.print.}}"></span>{{.print.}}</a>
@@ -477,14 +481,18 @@
                 <tbody>
                     <tr>
                         <?php if ($this->item['store_dept_edit']) { ?>
-                        <td align="center">
-                            <a href="javascript:void(0);" class="toolbar" onclick="editField();" title="{{.edit.}}"><span class="icon-button Icon-32-Edit"></span>{{.edit.}}</a>
-                            <a href="javascript:void(0);" class="toolbar" title="{{.save.}}" onclick="action('frmAdminItemEdit', 'storeDeptSave');"><span class="icon-button Icon-32-Save" title="{{.save.}}"></span>{{.save.}}</a>
+                            <td align="center">
+                                <a href="javascript:void(0);" class="toolbar" onclick="editField();" title="{{.edit.}}"><span class="icon-button Icon-32-Edit"></span>{{.edit.}}</a>
+                            </td>
+                            <td align="center">
+                                <a href="javascript:void(0);" class="toolbar" title="{{.save.}}" onclick="action('frmAdminItemEdit', 'storeDeptSave');"><span class="icon-button Icon-32-Save" title="{{.save.}}"></span>{{.save.}}</a>
+                            </td>
                             <?php if (!$this->item['time_complete'] && $this->item['num_hours']) { ?>
-                            <a href="javascript:void(0);" class="toolbar" title="{{.confirm.}}" onclick="javascript:if(confirm('{{.are_you_sure_want_to_confirm_this_item.}}')){window.location.href='<?php echo Link::createAdmin_current(array('cmd' => 'confirmComplete', 'id' => Link::get('id'))); ?>';}"><span class="icon-button Icon-32-Apply" title="{{.save.}}"></span>{{.confirm.}}</a>
-                            <?php } ?>
-                        </td>
-                        <?php }
+                                <td align="center">
+                                    <a href="javascript:void(0);" class="toolbar" title="{{.confirm.}}" onclick="javascript:if(confirm('{{.are_you_sure_want_to_confirm_this_item.}}')){window.location.href='<?php echo Link::createAdmin_current(array('cmd' => 'confirmComplete', 'id' => Link::get('id'))); ?>';}"><span class="icon-button Icon-32-Apply" title="{{.confirm.}}"></span>{{.confirm.}}</a>
+                                </td>
+                            <?php }
+                        }
                         if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'print')) { ?>
                             <td align="center">
                                 <a href="javascript:void(0);" class="toolbar" title="{{.print.}}" onclick="javascript:window.open('<?php echo Link::createAdmin_current(array('cmd' => 'printer', 'id' => Link::get('id'))); ?>');"><span class="icon-button Icon-32-Print" title="{{.print.}}"></span>{{.print.}}</a>

@@ -191,6 +191,14 @@
                                 </td>
                             </tr>
                             <tr>
+                                <td class="key">{{.construction.}}</td>
+                                <td><?php echo $this->item['construction_label']; ?></td>
+                            </tr>
+                            <tr>
+                                <td class="key">{{.order_status.}}</td>
+                                <td><?php echo $this->item['order_status_label']; ?></td>
+                            </tr>
+                            <tr>
                                 <td class="key">{{.warehouse_note.}}</td>
                                 <td>
                                     <div id="item_warehouse_note">
@@ -219,6 +227,7 @@
                                                 <th class="col_60">{{.col_quantity.}}</th>
                                                 <th class="col_60">{{.quantity_imported.}}</th>
                                                 <th class="col_60">{{.unit_hire_price.}}</th>
+                                                <th class="col_60">{{.price_accounting.}}</th>
                                                 <th class="col_60">{{.finished_price.}}</th>
                                             </tr>
                                         </thead>
@@ -237,13 +246,14 @@
                                                     <td align="right"><?php echo Systems::displayNumber($outSourcePro['quantity']); ?></td>
                                                     <td align="right"><?php echo Systems::displayNumber($outSourcePro['quantity_import']); ?></td>
                                                     <td align="right"><?php echo Systems::displayNumber($outSourcePro['hire_price']); ?></td>
+                                                    <td align="center"><?php echo $outSourcePro['price_accounting_label']; ?></td>
                                                     <td align="right"><?php echo Systems::displayNumber($outSourcePro['price']); ?></td>
                                                 </tr>
                                                 <?php if ($this->proMaterialList) { ?>
                                                     <tr id="rows_material<?php echo $i; ?>" class="<?php echo ($i % 2 == 1 ? 'row0' : 'row1') . ' ' . ($outSourcePro['quantity'] == $outSourcePro['quantity_import'] ? ' finished' : ''); ?>" style="display: none;">
                                                         <td>&nbsp;</td>
                                                         <td>&nbsp;</td>
-                                                        <td colspan="8">
+                                                        <td colspan="9">
                                                             <table cellspacing="0" border="1" class="adminlist">
                                                                 <thead>
                                                                     <tr>

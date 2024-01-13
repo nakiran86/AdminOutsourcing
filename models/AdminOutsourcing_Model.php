@@ -32,6 +32,7 @@ class AdminOutsourcing_Model extends Model {
                 tbl_outsourcing.time_complete,
                 tbl_outsourcing.warehouse_note,
                 tbl_outsourcing.time_warehouse_note,
+                tbl_outsourcing.order_status,
                 tbl_outsourcing.create_time,
                 tbl_outsourcing.modify_time,
                 tbl_outsourcing.log
@@ -85,6 +86,8 @@ class AdminOutsourcing_Model extends Model {
                 tbl_outsourcing.warehouse_note,
                 tbl_outsourcing.time_warehouse_note,
                 tbl_outsourcing.time_complete,
+                tbl_outsourcing.construction,
+                tbl_outsourcing.order_status,
                 tbl_outsourcing.note,
                 tbl_outsourcing.po_id,
                 tbl_outsourcing.`status`,
@@ -115,6 +118,7 @@ class AdminOutsourcing_Model extends Model {
                 tbl_outsourcing_product.quantity_import,
                 tbl_outsourcing_product.hire_price,
                 tbl_outsourcing_product.price,
+                tbl_outsourcing_product.price_accounting,
                 tbl_outsourcing_product.datatype,
                 tbl_outsourcing_product.`status`,
                 tbl_outsourcing_product.log
@@ -547,7 +551,9 @@ class AdminOutsourcing_Model extends Model {
             SELECT
                 tbl_product.id,
                 tbl_product.production_norms,
-                tbl_product.price
+                tbl_product.price,
+                tbl_product.regular_cost,
+                tbl_product.overtime_cost
             FROM
                 tbl_product
             WHERE
@@ -617,4 +623,65 @@ class AdminOutsourcing_Model extends Model {
         ');
     }
 
+    public function getListProduct($cond, $start = 0, $pagesize = 50) {
+        return $this->db->selectAll('
+            SELECT
+                tbl_product.id,
+                tbl_product.`code`,
+                tbl_product.hs_code,
+                tbl_product.`name`,
+                tbl_product.specification,
+                tbl_product.unit,
+                tbl_product.production_norms,
+                tbl_product.quantity,
+                tbl_product.price,
+                tbl_product.category_id,
+                tbl_product.product_type,
+                tbl_product.data_type,
+                tbl_product.regular_cost,
+                tbl_product.overtime_cost,
+                tbl_product.create_time,
+                tbl_product.`status`
+            FROM
+                tbl_product
+            WHERE
+                tbl_product.`status` <> "DELETED"' . $cond . '
+            ORDER BY
+                tbl_product.id DESC
+            LIMIT
+                ' . $start . ', ' . $pagesize . '
+        ');
+    }
+
+    /**
+     *
+     */
+    public function getTotalProducts($cond) {
+        return $this->db->selectOne('
+            SELECT
+                COUNT(*) AS total_record
+            FROM
+                tbl_product
+            WHERE
+                tbl_product.`status` <> "DELETED"' . $cond . '
+            LIMIT
+                0, 1
+        ');
+    }
+
+    /**
+     *
+     */
+    public function productSingleProduct($id, $extra_cond = ' AND tbl_product.`status` != "DELETED"') {
+        return $this->db->selectOne('
+            SELECT
+                *
+            FROM
+                tbl_product
+            WHERE
+                tbl_product.id = "' . $id . '"' . $extra_cond . '
+            LIMIT
+                0, 1
+        ');
+    }
 }

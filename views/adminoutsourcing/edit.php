@@ -4,7 +4,7 @@
             alert('{{.action_not_allowed.}}');
         } else {
             var id = $("#rid").val();
-            $("tbody#list_" + ele).append('<tr id="row' + id + '"><td><a href="#" class="removethis" onclick="removerow(\'tr#row' + id + '\'); return false;"><img src="public\/button\/cancel-32.png" width="24" height="24" alt="remove input" /><\/a><input type="hidden" name="records_new_' + ele + '[' + id + '][real_id]" id="records_new_' + ele + '_' + id + '_real_id" readonly="readonly" \/><\/td><td align="center"><input type="text" name="records_new_' + ele + '[' + id + '][real_code]" id="records_new_' + ele + '_' + id + '_real_code" onblur="return fillout(this.value, ' + id + ', \'real\', \'' + ele + '\');" \/><\/td><td><input type="text" name="records_new_' + ele + '[' + id + '][real_name]" id="records_new_' + ele + '_' + id + '_real_name" onblur="return fillout($(\'input#records_new_' + ele + '_' + id + '_real_code\').val(), ' + id + ', \'real\', \'' + ele + '\');" \/><\/td><td><input type="text" name="records_new_' + ele + '[' + id + '][real_specs]" id="records_new_' + ele + '_' + id + '_real_specs" \/><\/td><td><input type="text" name="records_new_' + ele + '[' + id + '][real_unit]" id="records_new_' + ele + '_' + id + '_real_unit" \/><\/td><td><input type="number" name="records_new_' + ele + '[' + id + '][real_quantity]" id="records_new_' + ele + '_' + id + '_real_quantity" class="TinyText" min="0" autocomplete="off" \/>\/<span class="qty-available qty-new-' + id + '">-<\/span><\/td><td><input type="number" name="records_new_' + ele + '[' + id + '][real_hire_price]" id="records_new_' + ele + '_' + id + '_real_hire_price" min="0" value="0" \/><\/td><td><input type="number" name="records_new_' + ele + '[' + id + '][real_price]" id="records_new_' + ele + '_' + id + '_real_price" min="0" value="0" readonly="readonly" \/><\/td><\/tr>');
+            $("tbody#list_" + ele).append('<tr id="row' + id + '"><td><a href="#" class="removethis" onclick="removerow(\'tr#row' + id + '\'); return false;"><img src="public\/button\/cancel-32.png" width="24" height="24" alt="remove input" /><\/a><input type="hidden" name="records_new_' + ele + '[' + id + '][real_id]" id="records_new_' + ele + '_' + id + '_real_id" readonly="readonly" \/><\/td><td align="center"><input type="text" name="records_new_' + ele + '[' + id + '][real_code]" id="records_new_' + ele + '_' + id + '_real_code" onblur="return fillout(this.value, ' + id + ', \'real\', \'' + ele + '\');" \/><\/td><td><input type="text" name="records_new_' + ele + '[' + id + '][real_name]" id="records_new_' + ele + '_' + id + '_real_name" onblur="return fillout($(\'input#records_new_' + ele + '_' + id + '_real_code\').val(), ' + id + ', \'real\', \'' + ele + '\');" \/><\/td><td><input type="text" name="records_new_' + ele + '[' + id + '][real_specs]" id="records_new_' + ele + '_' + id + '_real_specs" \/><\/td><td><input type="text" name="records_new_' + ele + '[' + id + '][real_unit]" id="records_new_' + ele + '_' + id + '_real_unit" \/><\/td><td><input type="number" name="records_new_' + ele + '[' + id + '][real_quantity]" id="records_new_' + ele + '_' + id + '_real_quantity" class="TinyText" min="0" autocomplete="off" \/>\/<span class="qty-available qty-new-' + id + '">-<\/span><\/td><td><input type="number" name="records_new_' + ele + '[' + id + '][real_hire_price]" id="records_new_' + ele + '_' + id + '_real_hire_price" min="0" value="0" readOnly="true" \/><\/td><td><select name="records_new_' + ele + '[' + id + '][price_accounting]" id="records_new_' + ele + '_' + id + '_price_accounting"> <option value="CAPITAL_PRICE">{{.price_accounting_capital.}}<\/option> <option value="INTERNAL_COST">{{.price_accounting_local.}}<\/option> <\/select><\/td><td><input type="number" name="records_new_' + ele + '[' + id + '][real_price]" id="records_new_' + ele + '_' + id + '_real_price" min="0" value="0" readonly="readonly" \/><\/td><\/tr>');
             $('#records_new_' + ele + '_' + id + '_real_code').autocomplete({
                 source: '<?php echo Link::createAdmin_current(array('cmd' => 'proInfo', 'field' => 'code')); ?>',
                 minChars: 2, max: 15, width: 200, selectFirst: false,
@@ -46,9 +46,9 @@
 
     function addNewMaterial(ele, rtype, index) {
         var id = $("#rid").val();
-        $("tbody#" + ele + '_' + index).append('<tr id="row_material_' + id + '"><td><a href="#" class="removethis" onclick="removerow(\'tr#row_material_' + id + '\'); return false;"><span class="icon-button-16 Icon-16-Delete" title="{{.delete.}}"></span><\/a><input type="hidden" name="' + rtype + '_' + ele + '[' + index + '][' + id + '][real_id]" id="' + rtype + '_' + ele + '_' + id + '_real_id" readonly="readonly" \/><\/td><td align="center"><input type="text" name="' + rtype + '_' + ele + '[' + index + '][' + id + '][real_code]" id="' + rtype + '_' + ele + '_' + id + '_real_code" onblur="return fillout(this.value, ' + id + ', \'real\', \'' + ele + '\');" \/><\/td><td><input type="text" name="' + rtype + '_' + ele + '[' + index + '][' + id + '][real_name]" id="' + rtype + '_' + ele + '_' + id + '_real_name" onblur="return fillout($(\'input#' + rtype + '_' + ele + '_' + id + '_real_code\').val(), ' + id + ', \'real\', \'' + ele + '\');" \/><\/td><td><input type="text" name="' + rtype + '_' + ele + '[' + index + '][' + id + '][real_specs]" id="' + rtype + '_' + ele + '_' + id + '_real_specs" \/><\/td><td><input type="text" name="' + rtype + '_' + ele + '[' + index + '][' + id + '][real_unit]" id="' + rtype + '_' + ele + '_' + id + '_real_unit" \/><\/td><td><input type="text" name="' + rtype + '_' + ele + '[' + index + '][' + id + '][real_norm]" id="' + rtype + '_' + ele + '_' + id + '_real_norm" min="0" class="TinyText" onkeyup="return showPrice(\'new\',\'' + index + '\',\'' + id + '\');" \/><\/td><td><input type="text" name="' + rtype + '_' + ele + '[' + index + '][' + id + '][real_price]" id="' + rtype + '_' + ele + '_' + id + '_real_price" min="0" value="0" onkeyup="return showPrice(\'new\',\'' + index + '\',\'' + id + '\');" \/><\/td><td align="right" id="' + rtype + '_' + ele + '_' + id + '_real_amount" class="subtotal-' + index + '">&nbsp;<\/td><\/tr>');
+        $("tbody#" + ele + '_' + index).append('<tr id="row_material_' + id + '"><td align="center"><a href="#" class="removethis" onclick="removerow(\'tr#row_material_' + id + '\'); return false;"><span class="icon-button-16 Icon-16-Delete" title="{{.delete.}}"></span><\/a><input type="hidden" name="' + rtype + '_' + ele + '[' + index + '][' + id + '][real_id]" id="' + rtype + '_' + ele + '_' + id + '_real_id" readonly="readonly" \/><\/td><td align="center"><input type="text" name="' + rtype + '_' + ele + '[' + index + '][' + id + '][real_code]" id="' + rtype + '_' + ele + '_' + id + '_real_code" onblur="return fillout(this.value, ' + id + ', \'real\', \'' + ele + '\');" \/><\/td><td><input type="text" name="' + rtype + '_' + ele + '[' + index + '][' + id + '][real_name]" id="' + rtype + '_' + ele + '_' + id + '_real_name" onblur="return fillout($(\'input#' + rtype + '_' + ele + '_' + id + '_real_code\').val(), ' + id + ', \'real\', \'' + ele + '\');" \/><\/td><td><input type="text" name="' + rtype + '_' + ele + '[' + index + '][' + id + '][real_specs]" id="' + rtype + '_' + ele + '_' + id + '_real_specs" \/><\/td><td><input type="text" name="' + rtype + '_' + ele + '[' + index + '][' + id + '][real_unit]" id="' + rtype + '_' + ele + '_' + id + '_real_unit" \/><\/td><td><input type="text" name="' + rtype + '_' + ele + '[' + index + '][' + id + '][real_norm]" id="' + rtype + '_' + ele + '_' + id + '_real_norm" min="0" class="TinyText" onkeyup="return showPrice(\'new\',\'' + index + '\',\'' + id + '\');" \/><\/td><td><input type="text" name="' + rtype + '_' + ele + '[' + index + '][' + id + '][real_price]" id="' + rtype + '_' + ele + '_' + id + '_real_price" min="0" value="0" onkeyup="return showPrice(\'new\',\'' + index + '\',\'' + id + '\');" \/><\/td><td align="right" id="' + rtype + '_' + ele + '_' + id + '_real_amount" class="subtotal-' + index + '">&nbsp;<\/td><\/tr>');
         $('#' + rtype + '_' + ele + '_' + id + '_real_code').autocomplete({
-            source: '<?php echo Link::createAdmin_current(array('cmd' => 'proInfo', 'field' => 'code')); ?>',
+            source: '<?php echo Link::createAdmin_current(array('cmd' => 'proInfo', 'field' => 'code')); ?>&proid=' + $('#records_withdrawal_' + index + '_real_id').val(),
             minChars: 2, max: 15, width: 200, selectFirst: false,
             select: function(event, ui) {
                 $('#' + rtype + '_' + ele + '_' + (id - 1) + '_real_id').val(ui.item.id);
@@ -56,12 +56,13 @@
                 $('#' + rtype + '_' + ele + '_' + (id - 1) + '_real_specs').val(ui.item.desc);
                 $('#' + rtype + '_' + ele + '_' + (id - 1) + '_real_unit').val(ui.item.unit);
                 $('#' + rtype + '_' + ele + '_' + (id - 1) + '_real_price').val(ui.item.price);
+                $('#' + rtype + '_' + ele + '_' + (id - 1) + '_real_norm').val(ui.item.norm);
             }
         }).autocomplete("instance")._renderItem = function(ul, item) {
             return $("<li>").append("<a>" + item.value + "<br>" + item.name + "<\/a>").appendTo(ul);
         };
         $('#' + rtype + '_' + ele + '_' + id + '_real_name').autocomplete({
-            source: '<?php echo Link::createAdmin_current(array('cmd' => 'proInfo', 'field' => 'name')); ?>',
+            source: '<?php echo Link::createAdmin_current(array('cmd' => 'proInfo', 'field' => 'name')); ?>&proid=' + $('#records_withdrawal_' + index + '_real_id').val(),
             minChars: 2, max: 15, width: 200, selectFirst: false,
             select: function(event, ui) {
                 $('#' + rtype + '_' + ele + '_' + (id - 1) + '_real_id').val(ui.item.id);
@@ -69,6 +70,7 @@
                 $('#' + rtype + '_' + ele + '_' + (id - 1) + '_real_specs').val(ui.item.desc);
                 $('#' + rtype + '_' + ele + '_' + (id - 1) + '_real_unit').val(ui.item.unit);
                 $('#' + rtype + '_' + ele + '_' + (id - 1) + '_real_price').val(ui.item.price);
+                $('#' + rtype + '_' + ele + '_' + (id - 1) + '_real_norm').val(ui.item.norm);
             }
         }).autocomplete("instance")._renderItem = function(ul, item) {
             return $("<li>").append("<a>" + item.value + "<br>" + item.desc + "<\/a>").appendTo(ul);
@@ -80,15 +82,24 @@
     function showPrice(rtype, prokey, matkey) {
         var matprice = Number($("input#" + rtype + "_list_material_" + matkey + "_real_norm").val()) * Number($("input#" + rtype + "_list_material_" + matkey + "_real_price").val());
         $("td#" + rtype + "_list_material_" + matkey + "_real_amount").text(formatNumber(matprice, 0));
-        var proprice = Number($("input#records_withdrawal_" + prokey + "_real_hire_price").val());
+        var proprice = 0;
         $('td.subtotal-' + prokey).each(function() {
-            proprice += Number($(this).text().replace(/\./g, '').replace(/,/g, '.'));
+            proprice += Number($(this).text().replace(/\./g, '').replace(/\,/g, '.'));
         });
+        var price_accounting = $("#input#records_withdrawal_" + prokey + "_price_accounting").val();
+        if (price_accounting == 'CAPITAL_PRICE') {
+            proprice += Number($("input#records_withdrawal_" + prokey + "_real_hire_price").val());
+        }
         $("input#records_withdrawal_" + prokey + "_real_price").val(proprice.toFixed(0));
     }
 
     $(document).ready(function() {
-        $('#date_out').datepicker({ dateFormat: 'dd/mm/yy', changeMonth: true, changeYear: true });
+        // $('#date_out').datepicker({ dateFormat: 'dd/mm/yy', changeMonth: true, changeYear: true });
+        $('#date_out').datetimepicker({
+            minDate: '+0d',
+            format: 'H:i d/m/Y',
+            step: 15
+        });
         $('#expired_date').datepicker({ dateFormat: 'dd/mm/yy', changeMonth: true, changeYear: true });
         $('a#add_row').click(function() { addNewRow('withdrawal'); });
     <?php if (Link::getPost('records_new')) { ?>
@@ -188,6 +199,16 @@
             }
         });
     }
+    function changePriceAccounting(value, prokey) {
+        proprice = 0;
+        $('td.subtotal-' + prokey).each(function() {
+            proprice += Number($(this).text().replace(/\./g, '').replace(/\,/g, '.'));
+        });
+        if (value == 'CAPITAL_PRICE') {
+            proprice += Number($("input#records_withdrawal_" + prokey + "_real_hire_price").val());
+        }
+        $("input#records_withdrawal_" + prokey + "_real_price").val(proprice.toFixed(0));
+    }
 </script>
 <div class="content-wrapper">
     <div class="path">
@@ -248,8 +269,9 @@
                 <input type="hidden" name="customer_id" id="customer_id" value="<?php echo Link::getPost('customer_id'); ?>" />
                 <table cellspacing="1" cellpadding="4" class="admintable">
                     <tr>
+                        <?php echo Link::getPost('date_out'); ?>
                         <td class="key"><span class="Required">*</span> {{.col_date_require.}}</td>
-                        <td><input name="date_out" type="text" id="date_out" value="<?php echo (Link::getPost('date_out') ? Link::getPost('date_out') : date('d/m/Y')); ?>" class="TextInput" maxlength="10" autocomplete="off" /></td>
+                        <td><input name="date_out" type="text" id="date_out" placeholder="H:i dd/mm/yyyy" value="<?php echo (Link::getPost('date_out') ? Link::getPost('date_out') : date('H:i d/m/Y')); ?>" class="TextInput" maxlength="10" autocomplete="off" /></td>
                     </tr>
                     <tr>
                         <td class="key"><span class="Required">*</span> {{.expired_date.}}</td>
@@ -266,6 +288,16 @@
                     <tr>
                         <td class="key"><span class="Required">*</span> {{.customer_address.}}</td>
                         <td><input name="buyer_address" type="text" id="buyer_address" value="<?php echo Link::getPost('buyer_address'); ?>" class="TextInput" /></td>
+                    </tr>
+                    <tr>
+                        <td class="key">{{.construction.}}</td>
+                        <td>
+                            <select name="construction" id="construction">
+                                <option value="OUTSIDE_HOURS">{{.outside_hours.}}</option>
+                                <option value="OFFICE_HOURS">{{.office_hours.}}</option>
+                            </select>
+                            <script>$("#construction").val('<?php echo Link::getPost('construction', 'OFFICE_HOURS'); ?>');</script>
+                        </td>
                     </tr>
                     <tr>
                         <td class="key">{{.note.}}</td>
@@ -286,6 +318,7 @@
                                         <th class="col_50">{{.col_unit.}}</th>
                                         <th class="col_60">{{.col_quantity.}}</th>
                                         <th class="col_60">{{.unit_hire_price.}}</th>
+                                        <th class="col_60">{{.price_accounting.}}</th>
                                         <th class="col_60">{{.finished_price.}}</th>
                                     </tr>
                                 </thead>
@@ -300,12 +333,19 @@
                                                 <td><?php echo $veW['product_specs']; ?></td>
                                                 <td><?php echo $veW['product_unit']; ?></td>
                                                 <td><input type="number" name="records_withdrawal[<?php echo $keW; ?>][real_quantity]" id="records_withdrawal_<?php echo $keW; ?>_real_quantity" value="<?php echo $veW['quantity']; ?>" autocomplete="off" /></td>
-                                                <td><input type="number" name="records_withdrawal[<?php echo $keW; ?>][real_hire_price]" id="records_withdrawal_<?php echo $keW; ?>_real_hire_price" value="<?php echo $veW['hire_price']; ?>" onkeyup="return showPrice('edit','<?php echo $keW; ?>','');" /></td>
+                                                <td><input type="number" name="records_withdrawal[<?php echo $keW; ?>][real_hire_price]" id="records_withdrawal_<?php echo $keW; ?>_real_hire_price" value="<?php echo $veW['hire_price']; ?>" readOnly="true" /></td>
+                                                <td align="center">
+                                                    <select name="records_withdrawal[<?php echo $keW; ?>][price_accounting]" id="records_withdrawal_<?php echo $keW; ?>_price_accounting" onchange="return changePriceAccounting(this.value, '<?php echo $keW; ?>');">
+                                                        <option value="CAPITAL_PRICE">{{.price_accounting_capital.}}</option>
+                                                        <option value="INTERNAL_COST">{{.price_accounting_local.}}</option>
+                                                    </select>
+                                                    <script>$("#records_withdrawal_<?php echo $keW; ?>_price_accounting").val('<?php echo $veW['price_accounting']; ?>');</script>
+                                                </td>
                                                 <td><input type="text" name="records_withdrawal[<?php echo $keW; ?>][real_price]" id="records_withdrawal_<?php echo $keW; ?>_real_price" value="<?php echo $veW['price']; ?>" readonly="readonly" /></td>
                                             </tr>
                                             <tr id="rows<?php echo $keW; ?>">
                                                 <td>&nbsp;</td>
-                                                <td colspan="7">
+                                                <td colspan="9">
                                                     <table cellspacing="0" border="1" class="adminlist">
                                                         <thead>
                                                             <tr>
@@ -323,7 +363,7 @@
                                                             <?php foreach ($this->proMaterialList as $keM => $veM) { ?>
                                                                 <?php if ($veM['outsourcing_product_id'] == $keW) { ?>
                                                                     <tr id="rows_material_<?php echo $keM; ?>" class="m-row">
-                                                                        <td><a href="javascript:void(0);" class="removethis" onclick="removerow('tr#rows_material_<?php echo $keM; ?>'); return false;"><span class="icon-button-16 Icon-16-Delete" title="{{.delete.}}"></span></a><input type="hidden" name="edit_list_material[<?php echo $keW; ?>][<?php echo $keM; ?>][real_id]" id="edit_list_material_<?php echo $keM; ?>_real_id" value="<?php echo $veM['product_id']; ?>" readonly="readonly" /></td>
+                                                                        <td align="center"><a href="javascript:void(0);" class="removethis" onclick="removerow('tr#rows_material_<?php echo $keM; ?>'); return false;"><span class="icon-button-16 Icon-16-Delete" title="{{.delete.}}"></span></a><input type="hidden" name="edit_list_material[<?php echo $keW; ?>][<?php echo $keM; ?>][real_id]" id="edit_list_material_<?php echo $keM; ?>_real_id" value="<?php echo $veM['product_id']; ?>" readonly="readonly" /></td>
                                                                         <td align="center"><?php echo $veM['product_code']; ?></td>
                                                                         <td><?php echo $veM['product_name']; ?></td>
                                                                         <td><?php echo $veM['product_specs']; ?></td>

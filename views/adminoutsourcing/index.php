@@ -232,6 +232,7 @@
                             <th class="col_25"><input type="checkbox" onclick="javascript:SelectAllCheckboxes(this);" name="chkAll" id="chkAll"></th>
                             <th class="col_70">{{.create_time.}}</th>
                             <th class="col_70">{{.col_date_require.}}</th>
+                            <th class="col_70">{{.order_status.}}</th>
                             <th class="col_70">{{.expired_date.}}</th>
                             <th class="col_70">{{.time_finish.}}</th>
                             <th class="col_60">{{.outsource_number.}}</th>
@@ -255,6 +256,7 @@
                                 <td align="center"><input type="checkbox" name="chkid[]" value="<?php echo $value['id']; ?>" /></td>
                                 <td align="center"><?php echo $value['create_time']; ?></td>
                                 <td align="center"><?php echo $value['date_out']; ?></td>
+                                <td align="center"><?php echo $value['order_status_label']; ?></td>
                                 <td align="center"><?php echo Systems::displayVnDate($value['expired_date']); ?></td>
                                 <td align="center"><?php echo Systems::displayVnDate($value['time_finished']); ?></td>
                                 <td align="center"><?php echo $value['outsource_number']; ?></td>

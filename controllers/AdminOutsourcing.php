@@ -594,6 +594,7 @@ class AdminOutsourcing extends Controller {
         $this->view->pagingList = $this->view->paging($this->view->totalRecord, $pagesize, FALSE);
         $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
         $this->view->subMenuList = array_merge($this->view->subMenuList, array('10' => array('id' => 10, 'name' => $this->view->renderLabel('statistic_outsourcing'), 'url' => Link::createAdmin_current(array('cmd' => 'statisticOutsourcing')))));
+        array_push($this->view->subMenuList, array('name' => $this->view->renderLabel('list_product_outsourcing'), 'url' => Link::createAdmin_current(array('cmd' => 'list_product'))));
         $this->view->itemList = $this->model->getList($cond, $start, $pagesize);
         foreach ($this->view->itemList as $key => $item) {
             $this->view->itemList[$key]['create_time'] = date("H:i:s d/m/Y", $item['create_time']);
@@ -677,6 +678,7 @@ class AdminOutsourcing extends Controller {
                 $this->view->item['accountant_name'] = $userList[$this->view->item['user_create_id']]['fullname'];
                 $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
                 $this->view->subMenuList = array_merge($this->view->subMenuList, array('10' => array('id' => 10, 'name' => $this->view->renderLabel('statistic_outsourcing'), 'url' => Link::createAdmin_current(array('cmd' => 'statisticOutsourcing')))));
+                array_push($this->view->subMenuList, array('name' => $this->view->renderLabel('list_product_outsourcing'), 'url' => Link::createAdmin_current(array('cmd' => 'list_product'))));
                 $this->view->proList = $this->model->productOutsourceList($id);
                 foreach ($this->view->proList as $keyP => $valueP) {
                     $this->view->proList[$keyP]['price_accounting_label'] = ($valueP['price_accounting'] == 'CAPITAL_PRICE') ? $this->view->renderLabel('price_accounting_capital') : $this->view->renderLabel('price_accounting_local');

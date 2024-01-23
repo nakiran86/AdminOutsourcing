@@ -15,6 +15,10 @@ class AdminOutsourcing extends Controller {
             require_once 'caches/backend/cHJvZHVjdHMuY2FjaGU';
             $this->_allProduct = eval('return ' . base64_decode($pL) . ';');
         }
+        $this->view->subMenuList = array();
+        array_push($this->view->subMenuList, array('name' => '{{.outsourcing_order.}}', 'url' => Link::createAdmin_current()));
+        array_push($this->view->subMenuList, array('name' => $this->view->renderLabel('statistic_outsourcing'), 'url' => Link::createAdmin_current(array('cmd' => 'statisticOutsourcing'))));
+        array_push($this->view->subMenuList, array('name' => $this->view->renderLabel('list_product_outsourcing'), 'url' => Link::createAdmin_current(array('cmd' => 'list_product'))));
     }
 
     /**
@@ -135,10 +139,10 @@ class AdminOutsourcing extends Controller {
             $cond .= ' AND `tbl_outsourcing_product`.`product_name` LIKE "%' . Link::get('product_name') . '%"';
         }
         if (Link::get('from_date')) {
-            $cond .= ' AND `tbl_outsourcing`.`date_out` >= "' . Systems::displaySqlDate(Link::get('from_date')) . '"';
+            $cond .= ' AND DATE(`tbl_outsourcing`.`date_out`) >= "' . Systems::displaySqlDate(Link::get('from_date')) . '"';
         }
         if (Link::get('to_date')) {
-            $cond .= ' AND `tbl_outsourcing`.`date_out` <= "' . Systems::displaySqlDate(Link::get('to_date')) . '"';
+            $cond .= ' AND DATE(`tbl_outsourcing`.`date_out`) <= "' . Systems::displaySqlDate(Link::get('to_date')) . '"';
         }
         if (Link::get('expire')) {
             if (Link::get('expire') == 'yes') {
@@ -458,19 +462,27 @@ class AdminOutsourcing extends Controller {
     public function proInfo() {
         $keyword = Link::get('term');
         $fieldName = Link::get('field');
-        $proId = Link::get('proid');
         $arrdata = array();
         $allProduct = array();
-        $itemProduct = $this->model->productSingleProduct($proId);
         $productList = array();
-        if ($itemProduct['production_norms']) {
-            $stringProductionNormsList = explode("\n", $itemProduct['production_norms']);
-            foreach ($stringProductionNormsList as $productionNormsList) {
-                $stringNormsList = explode('|', $productionNormsList);
-                $productList[$stringNormsList[0]]['pro_norms'] = $stringNormsList[1];
+        if (!empty(Link::get('proid'))) {
+            $proId = Link::get('proid');
+            $itemProduct = $this->model->productSingleProduct($proId);
+            if (!empty($itemProduct['production_norms'])) {
+                $stringProductionNormsList = explode("\n", $itemProduct['production_norms']);
+                foreach ($stringProductionNormsList as $productionNormsList) {
+                    $stringNormsList = explode('|', $productionNormsList);
+                    $productList[$stringNormsList[0]]['pro_norms'] = $stringNormsList[1];
+                }
+                if ($productList) {
+                    $allProduct = $this->model->getListProduct(' AND tbl_product.id IN (' . implode(',', array_keys($productList)) . ') AND tbl_product.' . $fieldName . ' LIKE "%' . trim($keyword) . '%"');
+                }
             }
-            if ($productList) {
-                $allProduct = $this->model->getListProduct(' AND tbl_product.id IN (' . implode(',', array_keys($productList)) . ') AND tbl_product.' . $fieldName . ' LIKE "%' . trim($keyword) . '%"');
+        } else {
+            foreach ($this->_allProduct as $key => $value) {
+                if (stripos($value[$fieldName], $keyword) !== FALSE) {
+                    $allProduct[$key] = $value;
+                }
             }
         }
         // foreach ($this->_allProduct as $key => $value) {
@@ -478,27 +490,45 @@ class AdminOutsourcing extends Controller {
         //         $allProduct[$key] = $value;
         //     }
         // }
-        foreach ($allProduct as $key => $product) {
-            if ($fieldName == 'name') {
-                $arrdata[$key]['id'] = $product['id'];
-                $arrdata[$key]['value'] = htmlspecialchars_decode($product['name']);
-                $arrdata[$key]['desc'] = htmlspecialchars_decode($product['specification']);
-                $arrdata[$key]['code'] = $product['code'];
-                $arrdata[$key]['unit'] = $product['unit'];
-                $arrdata[$key]['quantity'] = $product['quantity'];
-                $arrdata[$key]['price'] = $product['price'];
-                $arrdata[$key]['norm'] = $productList[$key]['pro_norms'];
-            } else {
-                //                $arrdata[] = $product[$fieldName];
-                $arrdata[$key]['id'] = $product['id'];
-                $arrdata[$key]['name'] = htmlspecialchars_decode($product['name']);
-                $arrdata[$key]['desc'] = htmlspecialchars_decode($product['specification']);
-                $arrdata[$key]['value'] = $product['code'];
-                $arrdata[$key]['unit'] = $product['unit'];
-                $arrdata[$key]['quantity'] = $product['quantity'];
-                $arrdata[$key]['price'] = $product['price'];
-                $arrdata[$key]['norm'] = $productList[$key]['pro_norms'];
+        if ($allProduct) {
+            foreach ($allProduct as $key => $product) {
+                if ($fieldName == 'name') {
+                    $arrdata[$key]['id'] = $product['id'];
+                    $arrdata[$key]['value'] = htmlspecialchars_decode($product['name']);
+                    $arrdata[$key]['desc'] = htmlspecialchars_decode($product['specification']);
+                    $arrdata[$key]['code'] = $product['code'];
+                    $arrdata[$key]['unit'] = $product['unit'];
+                    $arrdata[$key]['quantity'] = $product['quantity'];
+                    $arrdata[$key]['price'] = $product['price'];
+                    $arrdata[$key]['norm'] = '';
+                    if (!empty($productList)) {
+                        $arrdata[$key]['norm'] = $productList[$key]['pro_norms'];
+                    }
+                } else {
+                    //                $arrdata[] = $product[$fieldName];
+                    $arrdata[$key]['id'] = $product['id'];
+                    $arrdata[$key]['name'] = htmlspecialchars_decode($product['name']);
+                    $arrdata[$key]['desc'] = htmlspecialchars_decode($product['specification']);
+                    $arrdata[$key]['value'] = $product['code'];
+                    $arrdata[$key]['unit'] = $product['unit'];
+                    $arrdata[$key]['quantity'] = $product['quantity'];
+                    $arrdata[$key]['price'] = $product['price'];
+                    $arrdata[$key]['norm'] = '';
+                    if (!empty($productList)) {
+                        $arrdata[$key]['norm'] = $productList[$key]['pro_norms'];
+                    }
+                }
             }
+        } else {
+            $arrdata[1]['id'] = '0';
+            $arrdata[1]['value'] = $keyword;
+            $arrdata[1]['name'] = $this->view->renderLabel('invalid_product');
+            $arrdata[1]['desc'] = $this->view->renderLabel('invalid_product');
+            $arrdata[1]['code'] = '';
+            $arrdata[1]['unit'] = '';
+            $arrdata[1]['quantity'] = 0;
+            $arrdata[1]['price'] = 0;
+            $arrdata[1]['norm'] = '';
         }
         echo json_encode($arrdata);
         exit;
@@ -592,9 +622,7 @@ class AdminOutsourcing extends Controller {
         $this->view->totalRecord = $total_record['total_record'];
         $this->view->totalPage = $this->view->totalPage($this->view->totalRecord, $pagesize);
         $this->view->pagingList = $this->view->paging($this->view->totalRecord, $pagesize, FALSE);
-        $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
-        $this->view->subMenuList = array_merge($this->view->subMenuList, array('10' => array('id' => 10, 'name' => $this->view->renderLabel('statistic_outsourcing'), 'url' => Link::createAdmin_current(array('cmd' => 'statisticOutsourcing')))));
-        array_push($this->view->subMenuList, array('name' => $this->view->renderLabel('list_product_outsourcing'), 'url' => Link::createAdmin_current(array('cmd' => 'list_product'))));
+        // $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
         $this->view->itemList = $this->model->getList($cond, $start, $pagesize);
         foreach ($this->view->itemList as $key => $item) {
             $this->view->itemList[$key]['create_time'] = date("H:i:s d/m/Y", $item['create_time']);
@@ -676,9 +704,7 @@ class AdminOutsourcing extends Controller {
                     $this->view->item['store_dept_edit'] = true;
                 }
                 $this->view->item['accountant_name'] = $userList[$this->view->item['user_create_id']]['fullname'];
-                $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
-                $this->view->subMenuList = array_merge($this->view->subMenuList, array('10' => array('id' => 10, 'name' => $this->view->renderLabel('statistic_outsourcing'), 'url' => Link::createAdmin_current(array('cmd' => 'statisticOutsourcing')))));
-                array_push($this->view->subMenuList, array('name' => $this->view->renderLabel('list_product_outsourcing'), 'url' => Link::createAdmin_current(array('cmd' => 'list_product'))));
+                // $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
                 $this->view->proList = $this->model->productOutsourceList($id);
                 foreach ($this->view->proList as $keyP => $valueP) {
                     $this->view->proList[$keyP]['price_accounting_label'] = ($valueP['price_accounting'] == 'CAPITAL_PRICE') ? $this->view->renderLabel('price_accounting_capital') : $this->view->renderLabel('price_accounting_local');
@@ -830,8 +856,7 @@ class AdminOutsourcing extends Controller {
             Link::accessDenied();
         }
         Page::$title = $this->view->renderLabel('outsourcing_order_statistics');
-        $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
-        $this->view->subMenuList = array_merge($this->view->subMenuList, array('10' => array('id' => 10, 'name' => $this->view->renderLabel('statistic_outsourcing'), 'url' => Link::createAdmin_current(array('cmd' => 'statisticOutsourcing')))));
+        // $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
         if (Link::get('from_date') || Link::get('to_date')) {
             $pagesize = (Link::get('pagesize') > 0) ? Link::get('pagesize') : 50;
             $start = ($this->view->page_no() - 1) * $pagesize;
@@ -932,8 +957,7 @@ class AdminOutsourcing extends Controller {
         Page::$title = $this->view->renderLabel('add_new') . ' ' . $this->view->renderLabel('outsourcing_order');
         $this->addHeaderCss('public/css/jquery-ui/jquery.datetimepicker.min.css');
         $this->addHeaderJs('public/js/jquery.datetimepicker.full.min.js');
-        $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
-        $this->view->subMenuList = array_merge($this->view->subMenuList, array('10' => array('id' => 10, 'name' => $this->view->renderLabel('statistic_outsourcing'), 'url' => Link::createAdmin_current(array('cmd' => 'statisticOutsourcing')))));
+        // $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
         $content = $this->view->render('adminoutsourcing/edit', array('error' => $this->view->error, 'subMenuList' => $this->view->subMenuList), 'plugins/AdminOutsourcing/');
         return $content;
     }
@@ -954,10 +978,8 @@ class AdminOutsourcing extends Controller {
 //            if (empty($itemStockoutTransferList) || in_array('MANAGER', Session::get('group')) || $this->view->item['status'] == 'APPROVED') {
             if ($this->view->item['status'] != 'FINISHED' && $this->view->item['status'] != 'DELETED') {
                 if ($this->view->item) {
-                    $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
-                    $this->view->subMenuList = array_merge($this->view->subMenuList, array('10' => array('id' => 10, 'name' => $this->view->renderLabel('statistic_outsourcing'), 'url' => Link::createAdmin_current(array('cmd' => 'statisticOutsourcing')))));
+                    // $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
                     $this->view->proList = $this->model->productOutsourceList($id);
-                    debug($this->view->item);
                     foreach ($this->view->item as $key => $value) {
                         if (is_string($value) and !Link::getPost($key)) {
                             if ($key == 'date_out') {
@@ -1032,7 +1054,7 @@ class AdminOutsourcing extends Controller {
                     if ($proList) {
                         $flagCheck = TRUE;
                         $errors = '';
-                        if (strtotime($dataCusInfo['expired_date'] . ' +1 day') > strtotime('+2 month') || strtotime($dataCusInfo['expired_date'] . ' +1 day') < strtotime('now') || strtotime($dataCusInfo['expired_date']) < strtotime($dataCusInfo['date_out'])) {
+                        if (strtotime($dataCusInfo['expired_date'] . ' +1 day') > strtotime('+2 month') || strtotime($dataCusInfo['expired_date'] . ' +1 day') < strtotime('now') || $dataCusInfo['expired_date'] < $dateOut->format('Y-m-d')) {
                             $errors .= '<li><a href="javascript:void(0);" onclick="javascript:$(\'#expired_date\').focus();$(\'#expired_date\').addClass(\'error\');">1. ' . $this->view->renderLabel('invalid_po_expired_date') . '</a></li>';
                             $flagCheck = FALSE;
                         }
@@ -1133,6 +1155,7 @@ class AdminOutsourcing extends Controller {
     }
 
     private function _getQuantityAfterPo($poId) {
+        $poProList = array();
         $productPOList = $this->model->getPOProductsList('tbl_po_product.`po_id` = ' . $poId);
         $productIdPOList = array_unique(array_column($productPOList, 'item_id'));
         $allProductOrdered = $this->model->getListCheckAutoOrder('tbl_product_order.`status` IN ("APPROVED","PROCESSING","CANCELING") AND tbl_product_order.product_id IN ("' . implode('","', $productIdPOList) . '")');
@@ -1194,9 +1217,6 @@ class AdminOutsourcing extends Controller {
                     $dataCusInfo['customer_address'] = $data['customer_address'];
                     $dataCusInfo['construction'] = $data['construction'];
                     $dataCusInfo['note'] = $data['note'];
-                    debug($dataCusInfo);
-                    // die;
-
                     $proList = $data['product_withdrawal_edit_list'];
                     $proNewList = $data['product_withdrawal_list'];
                     $proMaterialEditList = $data['material_edit_list'];
@@ -1211,14 +1231,14 @@ class AdminOutsourcing extends Controller {
                             $flagCheck = TRUE;
                             if (($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'admin') && in_array('MANAGER', Session::get('group'))) || $curItem['status'] == 'APPROVED') {
                                 $dataCusInfo['expired_date'] = Systems::displaySqlDate($data['expired_date']);
-                                if (($curItem['expired_date'] != $dataCusInfo['expired_date'] && strtotime($dataCusInfo['expired_date'] . ' +1 day') < strtotime('now')) || strtotime($dataCusInfo['expired_date']) < strtotime($dataCusInfo['date_out'])) {
+                                if (($curItem['expired_date'] != $dataCusInfo['expired_date'] && strtotime($dataCusInfo['expired_date'] . ' +1 day') < strtotime('now')) || $dataCusInfo['expired_date'] < $dateOut->format('Y-m-d')) {
                                     $errors .= '<li><a href="javascript:void(0);" onclick="javascript:$(\'#expired_date\').focus();$(\'#expired_date\').addClass(\'error\');">5. ' . $this->view->renderLabel('invalid_po_expired_date') . '</a></li>';
                                     $flagCheck = FALSE;
                                 }
                             } else {
                                 if ($curItem['expired_date'] == '1970-01-01') {
                                     $dataCusInfo['expired_date'] = Systems::displaySqlDate($data['expired_date']);
-                                    if (strtotime($dataCusInfo['expired_date'] . ' +1 day') < strtotime('now') || strtotime($dataCusInfo['expired_date']) < strtotime($dataCusInfo['date_out'])) {
+                                    if (strtotime($dataCusInfo['expired_date'] . ' +1 day') < strtotime('now') || $dataCusInfo['expired_date'] < $dateOut->format('Y-m-d')) {
                                         $errors .= '<li><a href="javascript:void(0);" onclick="javascript:$(\'#expired_date\').focus();$(\'#expired_date\').addClass(\'error\');">6. ' . $this->view->renderLabel('invalid_po_expired_date') . '</a></li>';
                                         $flagCheck = FALSE;
                                     }
@@ -1388,7 +1408,6 @@ class AdminOutsourcing extends Controller {
                                 }
                             }
                             $productNormsInfoList = $this->model->getProductNormsInfo(' AND tbl_product.id IN ("' . implode('","', $arrProductIdList) . '")');
-                            debug($productNormsInfoList);
                             if ($proMaterialNewList) {
                                 foreach ($proMaterialNewList as $proOSKeyNew => $newMaterial) {
                                     foreach ($newMaterial as $kmn => $promn) {
@@ -1892,8 +1911,7 @@ class AdminOutsourcing extends Controller {
             Link::accessDenied();
         }
         Page::$title = $this->view->renderLabel('outsourcing_order_statistics');
-        $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
-        $this->view->subMenuList = array_merge($this->view->subMenuList, array('10' => array('id' => 10, 'name' => $this->view->renderLabel('statistic_outsourcing'), 'url' => Link::createAdmin_current(array('cmd' => 'statisticOutsourcing')))));
+        // $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
         $cond = '';
         if (Link::get('cbMonth') && Link::get('cbYear')) {
             $yearMonth = Link::get('cbYear') . (Link::get('cbMonth') > 9 ? Link::get('cbMonth') : '0' . Link::get('cbMonth'));
@@ -1989,9 +2007,7 @@ class AdminOutsourcing extends Controller {
         $cond = $this->_getCondProList();
         $pagesize = (Link::get('pagesize') > 0) ? Link::get('pagesize') : 50;
         $start = ($this->view->page_no() - 1) * $pagesize;
-        $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
-        array_push($this->view->subMenuList, array('name' => $this->view->renderLabel('statistic_outsourcing'), 'url' => Link::createAdmin_current(array('cmd' => 'statisticOutsourcing'))));
-        array_push($this->view->subMenuList, array('name' => $this->view->renderLabel('list_product_outsourcing'), 'url' => Link::createAdmin_current(array('cmd' => 'list_product'))));
+        // $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
         $this->view->productList = $this->model->getListProduct($cond, $start, $pagesize);
         $index = 1;
         foreach ($this->view->productList as $key => $value) {
@@ -2034,6 +2050,29 @@ class AdminOutsourcing extends Controller {
             Link::accessDenied();
         }
         try {
+            $newRecords = Link::getPost('records_new');
+            if ($newRecords && is_array($newRecords)) {
+                $arrProCode = array_unique(array_column($newRecords, 'code'));
+                $currentItemList = $this->model->getListProduct(' AND tbl_product.`code` IN ("' . implode('","', $arrProCode) . '")');
+                if (!empty($currentItemList)) {
+                    foreach ($newRecords as $value) {
+                        $dataAdd = array();
+                        foreach ($currentItemList as $prokey => $proValue) {
+                            if ($proValue['code'] == $value['code'] && $proValue['data_type'] != 'OUTSOURCE') {
+                                $dataAdd[$prokey]['id'] = $prokey;
+                                $dataAdd[$prokey]['data_type'] = 'OUTSOURCE';
+                                if (is_numeric($value['regular_cost'])) {
+                                    $dataAdd[$prokey]['regular_cost'] = $value['regular_cost'];
+                                }
+                                if (is_numeric($value['overtime_cost'])) {
+                                    $dataAdd[$prokey]['overtime_cost'] = $value['overtime_cost'];
+                                }
+                                $this->model->editSave('tbl_product', $dataAdd[$prokey]);
+                            }
+                        }
+                    }
+                }
+            }
             $editRecords = Link::getPost('records');
             if ($editRecords && is_array($editRecords)) {
                 $currentItem = $this->model->getListProduct(' AND tbl_product.id IN ("' . implode('","', array_keys($editRecords)) . '")');
@@ -2071,6 +2110,26 @@ class AdminOutsourcing extends Controller {
             $this->view->error = $exc->getMessage();
             return $this->index();
         }
+    }
+
+    public function deleteProduct($id = '') {
+        if (!$this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'unlock')) {
+            Link::accessDenied();
+        }
+        $currentItem = $this->model->productSingleProduct($id);
+        if ($currentItem) {
+            $modify = $currentItem['log'];
+            $strMod = " - Action: OUTSOURCING DELETE\n";
+            $modify .= ' * Date: ' . date('d/m/Y H:i:s') . ":\n" . $strMod;
+            $modify .= ' - User: ' . Session::get('user_fullname') . ' - ' . Session::get('user_id') . "\n";
+            $data['id'] = $id;
+            $data['data_type'] = 'GOODS';
+            $data['production_norms'] = '';
+            $data['log'] = $modify;
+            $this->model->editSave('tbl_product', $data);
+        }
+
+        Link::redirectAdminCurrent(array('cmd' => 'list_product'));
     }
 
     /**

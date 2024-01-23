@@ -35,9 +35,54 @@ $(document).ready(function(){
             }
         });
     });
+    <?php if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'unlock')) { ?>
+        $('a#add_row').click(function() { addNewRow(); });
+    <?php } ?>
 });
-
 <?php if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'unlock')) { ?>
+    function addNewRow() {
+        var id = $("#rid").val();
+        $("tbody#list").prepend('<tr id="row' + id + '"><td>&nbsp;<\/td><td align="center"><a href="#" class="removethis" onclick="removerow(\'tr#row' + id + '\'); return false;"><img src="public\/button\/cancel-32.png" width="24" height="24" alt="remove input" \/><\/a><\/td>\
+        <td><input type="text" name="records_new[' + id + '][code]" id="records_new_' + id + '_code" \/><\/td>\
+        <td><input type="text" name="records_new[' + id + '][name]" id="records_new_' + id + '_name" \/><\/td>\
+        <td id="specification_' + id + '"><\/td>\
+        <td align="center" id="unit_' + id + '"><\/td>\
+        <td id="production_norms_' + id + '"><\/td>\
+        <td><input type="text" name="records_new[' + id + '][overtime_cost]" id="records_new_' + id + '_overtime_cost" placeholder="{{.overtime_labor_cost.}}" autocomplete="off" onfocus="numberGroup(this.value, \'records_new_' + id + '_overtime_cost\')" onkeyup="numberGroup(this.value, \'records_new_' + id + '_overtime_cost\')" onblur="originalNumber(this.value, \'records_new_' + id + '_overtime_cost\')" value="0" \/><\/td>\
+        <td><input type="text" name="records_new[' + id + '][regular_cost]" id="records_new_' + id + '_regular_cost_" placeholder="{{.regular_labor_cost.}}" autocomplete="off" onfocus="numberGroup(this.value, \'records_new_' + id + '_regular_cost_\')" onkeyup="numberGroup(this.value, \'records_new_' + id + '_regular_cost_\')" onblur="originalNumber(this.value, \'records_new_' + id + '_regular_cost_\')" value="0" \/><\/td><td>&nbsp;<\/td><\/tr>');
+        $('#records_new_' + id + '_code').autocomplete({
+            source: '<?php echo Link::createAdmin_current(array('cmd' => 'proInfo', 'field' => 'code')); ?>',
+            minChars: 2, max: 15, width: 200, selectFirst: false,
+            select: function(event, ui) {
+                $('#records_new_' + (id - 1) + '_name').val(ui.item.name);
+                $('#specification_' + (id - 1)).html(ui.item.desc);
+                $('#unit_' + (id - 1)).html(ui.item.unit);
+                $('#specification_' + (id - 1)).html(ui.item.desc);
+            }
+        }).autocomplete("instance")._renderItem = function(ul, item) {
+            return $("<li>").append("<a>" + item.value + "<br>" + item.name + "<\/a>").appendTo(ul);
+        };
+        $('#records_new_' + id + '_name').autocomplete({
+            source: '<?php echo Link::createAdmin_current(array('cmd' => 'proInfo', 'field' => 'name')); ?>',
+            minChars: 2, max: 15, width: 200, selectFirst: false,
+            select: function(event, ui) {
+                $('#records_new_' + (id - 1) + '_code').val(ui.item.code);
+                $('#specification_' + (id - 1)).html(ui.item.desc);
+                $('#unit_' + (id - 1)).html(ui.item.unit);
+                $('#specification_' + (id - 1)).html(ui.item.desc);
+            }
+        }).autocomplete("instance")._renderItem = function(ul, item) {
+            return $("<li>").append("<a>" + item.value + "<br>" + item.desc + "<\/a>").appendTo(ul);
+        };
+        var options = {};
+        $('#row' + id).effect('highlight', options, 500, function() {
+            setTimeout(function() {
+                $('#row' + id).removeAttr("style").hide().fadeIn();
+            }, 2000);
+        });
+        id = (id - 1) + 2;
+        $("#rid").val(id);
+    }
     function edit_row(index) {
         var edit_mode = $('#records_' + index + '_edit_mode').val();
         if (edit_mode == 1) {
@@ -45,6 +90,9 @@ $(document).ready(function(){
             $('#overtime_cost_' + index).html('<input type="text" name="records[' + index + '][overtime_cost]" id="records_' + index + '_overtime_cost" placeholder="{{.overtime_labor_cost.}}" autocomplete="off" onfocus="numberGroup(this.value, \'records_' + index + '_overtime_cost\')" onkeyup="numberGroup(this.value, \'records_' + index + '_overtime_cost\')" onblur="originalNumber(this.value, \'records_' + index + '_overtime_cost\')" value="' + $('#overtime_cost_' + index).text().replace(/\./g, '') + '" \/>');
             $('#records_' + index + '_edit_mode').val(0);
         }
+    }
+    function del_row(index) {
+
     }
 <?php } if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'edit')) { ?>
     function addNewNorms() {
@@ -152,7 +200,7 @@ $(document).ready(function(){
     <div class="path">
         <ul>
             <li class="SecondLast"><a href="<?php echo Link::createAdmin('admin'); ?>">{{.home.}}</a></li>
-            <li class="Last"><span>{{.product_list.}}</span></li>
+            <li class="Last"><span>{{.list_product_outsourcing.}}</span></li>
         </ul>
     </div>
     <div class="subMenuBox">
@@ -166,13 +214,16 @@ $(document).ready(function(){
     <div class="toolboxButton">
         <div class="header">
             <img src="<?php echo WEB_ROOT . 'public/icon/generic-48.png'; ?>" />
-            <span>{{.product_list.}}</span>
+            <span>{{.list_product_outsourcing.}}</span>
         </div>
         <div class="toolbar-table">
             <table class="toolbar">
                 <tbody>
                     <tr>
                         <?php if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'unlock')) { ?>
+                            <td align="center">
+                                <a href="javascript:void(0);" id="add_row" class="toolbar" title="{{.add_new.}}"><span class="icon-button Icon-32-Add" title="{{.add_new.}}"></span>{{.add_new.}}</a>
+                            </td>
                             <td align="center">
                                 <a href="javascript:void(0);" class="toolbar" title="{{.save.}}" onclick="action('frmAdminItemsList', 'saveProduct');"><span class="icon-button Icon-32-Save" title="{{.save.}}"></span>{{.save.}}</a>
                             </td>
@@ -296,10 +347,11 @@ $(document).ready(function(){
                             </td>
                             <td class="col_right"><div id="overtime_cost_<?php echo $value['id']; ?>"><?php echo $value['overtime_cost'];?></div></td>
                             <td class="col_right"><div id="regular_cost_<?php echo $value['id']; ?>"><?php echo $value['regular_cost'];?></div></td>
-                            <td align="center" nowrap="nowrap">
+                            <td align="center">
                                 <?php if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'unlock')) { ?>
                                 <input name="records_<?php echo $value['id']; ?>_edit_mode" type="hidden" id="records_<?php echo $value['id']; ?>_edit_mode" value="1" />
-                                <div><a href="javascript:void(0);" onclick="edit_row('<?php echo $value['id'];?>'); return false;">{{.edit.}}</a></div>
+                                <a href="javascript:void(0);" class="list-button" onclick="edit_row('<?php echo $value['id'];?>'); return false;">{{.edit.}}</a>
+                                <a href="<?php echo Link::createAdmin_current(array('cmd' => 'deleteProduct', 'id' => $value['id'])); ?>" onclick="javascript:return confirm('{{.are_you_sure_want_to_delete_this_news.}}');" class="list-button">{{.delete.}}</a>
                                 <?php } ?>
                             </td>
                         </tr>
@@ -322,13 +374,16 @@ $(document).ready(function(){
     <div class="toolboxButton">
         <div class="header">
             <img src="<?php echo WEB_ROOT . 'public/icon/generic-48.png'; ?>" />
-            <span>{{.product_list.}}</span>
+            <span>{{.list_product_outsourcing.}}</span>
         </div>
         <div class="toolbar-table">
             <table class="toolbar">
                 <tbody>
                     <tr>
                         <?php if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'unlock')) { ?>
+                            <td align="center">
+                                <a href="javascript:void(0);" id="add_row" class="toolbar" title="{{.add_new.}}"><span class="icon-button Icon-32-Add" title="{{.add_new.}}"></span>{{.add_new.}}</a>
+                            </td>
                             <td align="center">
                                 <a href="javascript:void(0);" class="toolbar" title="{{.save.}}" onclick="action('frmAdminItemsList', 'saveProduct');"><span class="icon-button Icon-32-Save" title="{{.save.}}"></span>{{.save.}}</a>
                             </td>

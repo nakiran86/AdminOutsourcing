@@ -485,11 +485,6 @@ class AdminOutsourcing extends Controller {
                 }
             }
         }
-        // foreach ($this->_allProduct as $key => $value) {
-        //     if (stripos($value[$fieldName], $keyword) !== FALSE) {
-        //         $allProduct[$key] = $value;
-        //     }
-        // }
         if ($allProduct) {
             foreach ($allProduct as $key => $product) {
                 if ($fieldName == 'name') {
@@ -1907,7 +1902,7 @@ class AdminOutsourcing extends Controller {
      * @return mixed
      */
     public function statisticOutsourcing() {
-        if (!$this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'admin')) {
+        if (!$this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'view')) {
             Link::accessDenied();
         }
         Page::$title = $this->view->renderLabel('outsourcing_order_statistics');

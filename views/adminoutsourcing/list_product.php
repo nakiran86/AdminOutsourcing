@@ -245,6 +245,7 @@ $(document).ready(function(){
                     <td style="vertical-align: middle; padding-top: 0;" align="right">
                         <form name="frmSearch" id="frmSearch" action="" method="get">
                             <input name="page" type="hidden" id="page" value="<?php echo Link::get('page');?>" />
+                            <input name="cmd" type="hidden" id="cmd" value="list_product" />
                             {{.keyword.}}
                             <input type="text" class="TextInput" id="txtFindData" name="txtFindData" style="width: 200px;" />
                             <input type="submit" class="Button" id="btnFind" value="{{.search.}}" name="btnFind" />
@@ -258,7 +259,7 @@ $(document).ready(function(){
         <div id="advance-search" title="{{.advance_search.}}">
             <form name="frmAdvanceSearch" id="frmAdvanceSearch" method="get" action="">
                 <input name="page" type="hidden" id="page" value="<?php echo Link::get('page');?>" />
-                <input name="cmd" type="hidden" id="cmd" value="<?php echo Link::get('cmd');?>" />
+                <input name="cmd" type="hidden" id="cmd" value="list_product" />
                 <table cellspacing="1" cellpadding="4" class="admintable search" align="center">
                     <tbody>
                         <tr>

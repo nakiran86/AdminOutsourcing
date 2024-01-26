@@ -2205,7 +2205,7 @@ class AdminOutsourcing extends Controller {
                 $itemConfirm .= " - Old production_norms: " . $currentItem['production_norms'] . "\n";
                 $itemConfirm .= "   New production_norms: " . $newStringNorms . "\n";
                 $itemConfirm .= ' - User: ' . Session::get('user_fullname') . ' - ' . Session::get('user_id') . "\n";
-                $this->model->eSave('tbl_product', array('id' => $id, 'production_norms' => $newStringNorms, 'log' => $itemConfirm));
+                $this->model->editSave('tbl_product', array('id' => $id, 'production_norms' => $newStringNorms, 'log' => $itemConfirm));
             }
         }
         echo $stringContent;

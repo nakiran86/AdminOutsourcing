@@ -462,9 +462,11 @@ class AdminOutsourcing extends Controller {
     public function proInfo() {
         $keyword = Link::get('term');
         $fieldName = Link::get('field');
+        $construction = Link::get('construction');
         $arrdata = array();
         $allProduct = array();
         $productList = array();
+        $cond = '';
         if (!empty(Link::get('proid'))) {
             $proId = Link::get('proid');
             $itemProduct = $this->model->productSingleProduct($proId);
@@ -475,16 +477,19 @@ class AdminOutsourcing extends Controller {
                     $productList[$stringNormsList[0]]['pro_norms'] = $stringNormsList[1];
                 }
                 if ($productList) {
-                    $allProduct = $this->model->getListProduct(' AND tbl_product.id IN (' . implode(',', array_keys($productList)) . ') AND tbl_product.' . $fieldName . ' LIKE "%' . trim($keyword) . '%"');
+                    $cond = ' AND tbl_product.id IN (' . implode(',', array_keys($productList)) . ') AND tbl_product.' . $fieldName . ' LIKE "%' . trim($keyword) . '%"';
+                    // $allProduct = $this->model->getListProduct(' AND tbl_product.id IN (' . implode(',', array_keys($productList)) . ') AND tbl_product.' . $fieldName . ' LIKE "%' . trim($keyword) . '%"');
                 }
             }
         } else {
-            foreach ($this->_allProduct as $key => $value) {
-                if (stripos($value[$fieldName], $keyword) !== FALSE) {
-                    $allProduct[$key] = $value;
-                }
-            }
+            $cond = ' AND tbl_product.' . $fieldName . ' LIKE "%' . trim($keyword) . '%"';
+            // foreach ($this->_allProduct as $key => $value) {
+            //     if (stripos($value[$fieldName], $keyword) !== FALSE) {
+            //         $allProduct[$key] = $value;
+            //     }
+            // }
         }
+        $allProduct = $this->model->getListProduct($cond);
         if ($allProduct) {
             foreach ($allProduct as $key => $product) {
                 if ($fieldName == 'name') {
@@ -495,6 +500,13 @@ class AdminOutsourcing extends Controller {
                     $arrdata[$key]['unit'] = $product['unit'];
                     $arrdata[$key]['quantity'] = $product['quantity'];
                     $arrdata[$key]['price'] = $product['price'];
+                    $arrdata[$key]['real_hire_price'] = 0;
+                    if ($construction == 'OFFICE_HOURS') {
+                        $arrdata[$key]['real_hire_price'] = $product['regular_cost'];
+                    }
+                    if ($construction == 'OUTSIDE_HOURS') {
+                        $arrdata[$key]['real_hire_price'] = $product['overtime_cost'];
+                    }
                     $arrdata[$key]['norm'] = '';
                     if (!empty($productList)) {
                         $arrdata[$key]['norm'] = $productList[$key]['pro_norms'];
@@ -508,6 +520,13 @@ class AdminOutsourcing extends Controller {
                     $arrdata[$key]['unit'] = $product['unit'];
                     $arrdata[$key]['quantity'] = $product['quantity'];
                     $arrdata[$key]['price'] = $product['price'];
+                    $arrdata[$key]['real_hire_price'] = 0;
+                    if ($construction == 'OFFICE_HOURS') {
+                        $arrdata[$key]['real_hire_price'] = $product['regular_cost'];
+                    }
+                    if ($construction == 'OUTSIDE_HOURS') {
+                        $arrdata[$key]['real_hire_price'] = $product['overtime_cost'];
+                    }
                     $arrdata[$key]['norm'] = '';
                     if (!empty($productList)) {
                         $arrdata[$key]['norm'] = $productList[$key]['pro_norms'];
@@ -523,9 +542,38 @@ class AdminOutsourcing extends Controller {
             $arrdata[1]['unit'] = '';
             $arrdata[1]['quantity'] = 0;
             $arrdata[1]['price'] = 0;
+            $arrdata[1]['real_hire_price'] = 0;
             $arrdata[1]['norm'] = '';
         }
         echo json_encode($arrdata);
+        exit;
+    }
+
+    public function showHirePrice() {
+        if (!$this->grant->checkLogin()) {
+            Link::accessDenied();
+        }
+        if (Link::get('proIds')) {
+            $arrdata = array();
+            $proIds = Link::get('proIds');
+            $construction = Link::get('construction');
+            $cond = ' AND tbl_product.id IN ("' . implode('", "', $proIds) . '")';
+            if ($construction == 'OFFICE_HOURS') {
+
+            }
+            $allProduct = $this->model->getListProduct($cond);
+            foreach ($allProduct as $key => $product) {
+                $arrdata[$key]['id'] = $product['id'];
+                $arrdata[$key]['real_hire_price'] = 0;
+                if ($construction == 'OFFICE_HOURS') {
+                    $arrdata[$key]['real_hire_price'] = $product['regular_cost'];
+                }
+                if ($construction == 'OUTSIDE_HOURS') {
+                    $arrdata[$key]['real_hire_price'] = $product['overtime_cost'];
+                }
+            }
+            echo json_encode($arrdata);
+        }
         exit;
     }
 
@@ -534,9 +582,12 @@ class AdminOutsourcing extends Controller {
      */
     public function fillinfo() {
         $keyword = Link::get('nameid');
+        $construction = Link::get('construction');
         $arrdata = array();
         if ($keyword) {
-            foreach ($this->_allProduct as $product) {
+            $cond = ' AND tbl_product.code LIKE "%' . trim($keyword) . '%"';
+            $allProduct = $this->model->getListProduct($cond);
+            foreach ($allProduct as $product) {
                 if ($product['code'] == strtoupper($keyword)) {
                     $arrdata['id'] = $product['id'];
                     $arrdata['code'] = $product['code'];
@@ -544,6 +595,12 @@ class AdminOutsourcing extends Controller {
                     $arrdata['specification'] = htmlspecialchars_decode($product['specification']);
                     $arrdata['unit'] = $product['unit'];
                     $arrdata['price'] = $product['price'];
+                    if ($construction == 'OFFICE_HOURS') {
+                        $arrdata['real_hire_price'] = $product['regular_cost'];
+                    }
+                    if ($construction == 'OUTSIDE_HOURS') {
+                        $arrdata['real_hire_price'] = $product['overtime_cost'];
+                    }
                 }
             }
         }
@@ -1546,6 +1603,11 @@ class AdminOutsourcing extends Controller {
                                                 $dataUpdatePCPrice[$originCurentProList[$kW]['product_id']]['create_time'] = $endImportedList[$originCurentProList[$kW]['product_id']]['create_time'];
                                                 $dataUpdatePCPrice[$originCurentProList[$kW]['product_id']]['stockin'] = 'MAIN';
                                             }
+                                            if ($this->grant->check_privilege('MOD_ADMINPRODUCT|END', 'approved')) {
+                                                $proOutsourcingEdit[$kW]['price_accounting'] = $vW['price_accounting'];
+                                                $strModProAdd[$kW] .= ' - ' . 'Old price_accounting: ' . $originCurentProList[$kW]['price_accounting'] . "\n";
+                                                $strModProAdd[$kW] .= '   ' . 'New price_accounting: ' . $vW['price_accounting'] . "\n";
+                                            }
                                             //                                            }
                                             if ($strModProAdd[$kW]) {
                                                 $strModPro[$kW] = ' * Date: ' . date('d/m/Y H:i:s') . ":\n";
@@ -1613,6 +1675,7 @@ class AdminOutsourcing extends Controller {
                                             }
                                             $proInsOutsourcingData[$kWNew]['hire_price'] = $vWNew['real_hire_price'];
                                             $proInsOutsourcingData[$kWNew]['price'] = $vWNew['real_hire_price'];
+                                            $proInsOutsourcingData[$kWNew]['price_accounting'] = $vWNew['price_accounting'];
                                             $proInsOutsourcingData[$kWNew]['datatype'] = 'PRODUCT';
                                             $proInsOutsourcingData[$kWNew]['status'] = 'PENDING';
                                             $proInsOutsourcingData[$kWNew]['create_time'] = time();
@@ -1874,11 +1937,10 @@ class AdminOutsourcing extends Controller {
         Link::redirectAdminCurrent();
     }
 
-
     /**
      * Summary of confirmComplete
      * @param mixed $id
-     * @return never
+     * @return void
      */
     public function confirmComplete($id = '') {
         if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'lock') && in_array('STORE', Session::get('group'))) {

@@ -341,11 +341,7 @@ $(document).ready(function(){
                                 <div id="production-norms<?php echo $value['id']; ?>"><?php if ($value['production_norms_list']) { ?>
                                 <table cellpadding="0" cellspacing="0" class="sub-table">
                                     <?php foreach ($value['production_norms_list'] as $pronorms) { ?>
-                                    <tr>
-                                        <td class="col_left"><a href="javascript:void(0);" onclick="selectpronorm('<?php echo $value['id']; ?>');"><?php echo $pronorms['pro_code']; ?></a></td>
-                                        <td class="col_right"><?php echo $pronorms['pro_name']; ?></td>
-                                        <td class="col_right"><?php echo $pronorms['pro_norms']; ?></td>
-                                    </tr>
+                                    <tr><td class="col_left"><a href="javascript:void(0);" onclick="selectpronorm('<?php echo $value['id']; ?>');"><?php echo $pronorms['pro_code']; ?></a></td><td class="col_right"><?php echo $pronorms['pro_norms']; ?></td></tr>
                                     <?php } ?>
                                 </table>
                                 <?php } else { ?><a href="javascript:void(0);" onclick="selectpronorm('<?php echo $value['id']; ?>');">{{.not_yet_set.}}</a><?php } ?></div>

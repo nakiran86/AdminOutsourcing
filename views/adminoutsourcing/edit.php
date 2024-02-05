@@ -4,9 +4,9 @@
             alert('{{.action_not_allowed.}}');
         } else {
             var id = $("#rid").val();
-            $("tbody#list_" + ele).append('<tr id="row' + id + '"><td><a href="#" class="removethis" onclick="removerow(\'tr#row' + id + '\'); return false;"><img src="public\/button\/cancel-32.png" width="24" height="24" alt="remove input" /><\/a><input type="hidden" name="records_new_' + ele + '[' + id + '][real_id]" id="records_new_' + ele + '_' + id + '_real_id" readonly="readonly" \/><\/td><td align="center"><input type="text" name="records_new_' + ele + '[' + id + '][real_code]" id="records_new_' + ele + '_' + id + '_real_code" onblur="return fillout(this.value, ' + id + ', \'real\', \'' + ele + '\');" \/><\/td><td><input type="text" name="records_new_' + ele + '[' + id + '][real_name]" id="records_new_' + ele + '_' + id + '_real_name" onblur="return fillout($(\'input#records_new_' + ele + '_' + id + '_real_code\').val(), ' + id + ', \'real\', \'' + ele + '\');" \/><\/td><td><input type="text" name="records_new_' + ele + '[' + id + '][real_specs]" id="records_new_' + ele + '_' + id + '_real_specs" \/><\/td><td><input type="text" name="records_new_' + ele + '[' + id + '][real_unit]" id="records_new_' + ele + '_' + id + '_real_unit" \/><\/td><td><input type="number" name="records_new_' + ele + '[' + id + '][real_quantity]" id="records_new_' + ele + '_' + id + '_real_quantity" class="TinyText" min="0" autocomplete="off" \/>\/<span class="qty-available qty-new-' + id + '">-<\/span><\/td><td><input type="number" name="records_new_' + ele + '[' + id + '][real_hire_price]" id="records_new_' + ele + '_' + id + '_real_hire_price" min="0" value="0" readOnly="true" \/><\/td><td><select name="records_new_' + ele + '[' + id + '][price_accounting]" id="records_new_' + ele + '_' + id + '_price_accounting"> <option value="CAPITAL_PRICE">{{.price_accounting_capital.}}<\/option> <option value="INTERNAL_COST">{{.price_accounting_local.}}<\/option> <\/select><\/td><td><input type="number" name="records_new_' + ele + '[' + id + '][real_price]" id="records_new_' + ele + '_' + id + '_real_price" min="0" value="0" readonly="readonly" \/><\/td><\/tr>');
+            $("tbody#list_" + ele).append('<tr id="row' + id + '"><td><a href="#" class="removethis" onclick="removerow(\'tr#row' + id + '\'); return false;"><img src="public\/button\/cancel-32.png" width="24" height="24" alt="remove input" /><\/a><input type="hidden" name="records_new_' + ele + '[' + id + '][real_id]" id="records_new_' + ele + '_' + id + '_real_id" readonly="readonly" \/><\/td><td align="center"><input type="text" name="records_new_' + ele + '[' + id + '][real_code]" id="records_new_' + ele + '_' + id + '_real_code" onblur="return fillout(this.value, ' + id + ', \'real\', \'' + ele + '\');" \/><\/td><td><input type="text" name="records_new_' + ele + '[' + id + '][real_name]" id="records_new_' + ele + '_' + id + '_real_name" onblur="return fillout($(\'input#records_new_' + ele + '_' + id + '_real_code\').val(), ' + id + ', \'real\', \'' + ele + '\');" \/><\/td><td><input type="text" name="records_new_' + ele + '[' + id + '][real_specs]" id="records_new_' + ele + '_' + id + '_real_specs" \/><\/td><td><input type="text" name="records_new_' + ele + '[' + id + '][real_unit]" id="records_new_' + ele + '_' + id + '_real_unit" \/><\/td><td><input type="number" name="records_new_' + ele + '[' + id + '][real_quantity]" id="records_new_' + ele + '_' + id + '_real_quantity" class="TinyText" min="0" autocomplete="off" \/>\/<span class="qty-available qty-new-' + id + '">-<\/span><\/td><td><input type="number" name="records_new_' + ele + '[' + id + '][real_hire_price]" id="records_new_' + ele + '_' + id + '_real_hire_price" min="0" value="0" \/><\/td><td><select name="records_new_' + ele + '[' + id + '][price_accounting]" id="records_new_' + ele + '_' + id + '_price_accounting"> <option value="CAPITAL_PRICE">{{.price_accounting_capital.}}<\/option> <option value="INTERNAL_COST">{{.price_accounting_local.}}<\/option> <\/select><\/td><td><input type="number" name="records_new_' + ele + '[' + id + '][real_price]" id="records_new_' + ele + '_' + id + '_real_price" min="0" value="0" readonly="readonly" \/><\/td><\/tr>');
             $('#records_new_' + ele + '_' + id + '_real_code').autocomplete({
-                source: '<?php echo Link::createAdmin_current(array('cmd' => 'proInfo', 'field' => 'code')); ?>&construction=' + $('#construction').val(),
+                source: '<?php echo Link::createAdmin_current(array('cmd' => 'proInfo', 'field' => 'code')); ?>',
                 minChars: 2, max: 15, width: 200, selectFirst: false,
                 select: function(event, ui) {
                     $('#records_new_' + ele + '_' + (id - 1) + '_real_id').val(ui.item.id);
@@ -14,14 +14,13 @@
                     $('#records_new_' + ele + '_' + (id - 1) + '_real_specs').val(ui.item.desc);
                     $('#records_new_' + ele + '_' + (id - 1) + '_real_unit').val(ui.item.unit);
                     $('#records_new_' + ele + '_' + (id - 1) + '_real_quantity').val(0);
-                    $('#records_new_' + ele + '_' + (id - 1) + '_real_hire_price').val(ui.item.real_hire_price);
                     $('.qty-new-' + (id - 1) + '').text(formatNumber(ui.item.quantity));
                 }
             }).autocomplete("instance")._renderItem = function(ul, item) {
                 return $("<li>").append("<a>" + item.value + "<br>" + item.name + "<\/a>").appendTo(ul);
             };
             $('#records_new_' + ele + '_' + id + '_real_name').autocomplete({
-                source: '<?php echo Link::createAdmin_current(array('cmd' => 'proInfo', 'field' => 'name')); ?>&construction=' + $('#construction').val(),
+                source: '<?php echo Link::createAdmin_current(array('cmd' => 'proInfo', 'field' => 'name')); ?>',
                 minChars: 2, max: 15, width: 200, selectFirst: false,
                 select: function(event, ui) {
                     $('#records_new_' + ele + '_' + (id - 1) + '_real_id').val(ui.item.id);
@@ -29,7 +28,6 @@
                     $('#records_new_' + ele + '_' + (id - 1) + '_real_specs').val(ui.item.desc);
                     $('#records_new_' + ele + '_' + (id - 1) + '_real_unit').val(ui.item.unit);
                     $('#records_new_' + ele + '_' + (id - 1) + '_real_quantity').val(0);
-                    $('#records_new_' + ele + '_' + (id - 1) + '_real_hire_price').val(ui.item.real_hire_price);
                     $('.qty-new-' + (id - 1) + '').text(formatNumber(ui.item.quantity));
                 }
             }).autocomplete("instance")._renderItem = function(ul, item) {
@@ -96,61 +94,6 @@
     }
 
     $(document).ready(function() {
-        $('#construction').change(function() {
-            var construction = $(this).val();
-            var proIds = [];
-            $('#list_withdrawal_edit > tr').each(function() {
-                var id = $(this).attr('id');
-                var real_id = $(this).find('td:first input').val();
-                if ($.isNumeric(real_id)) {
-                    proIds.push(real_id);
-                }
-            });
-            $('#list_withdrawal > tr').each(function() {
-                var id = $(this).attr('id');
-                var real_id = $(this).find('td:first input').val();
-                if ($.isNumeric(real_id)) {
-                    proIds.push(real_id);
-                }
-            });
-            $.ajax({
-                url: '<?php echo Link::createAdmin_current(array('cmd' => 'showHirePrice')); ?>',
-                data: {
-                    proIds: proIds,
-                    construction: construction
-                },
-                beforeSend: function() {
-                    $('#construction').parent().append('<i class="fa fa-spinner fa-spin"></i>');
-                },
-                success: function(data) {
-                    if (data) {
-                        $('#construction').parent().find('.fa').remove();
-                        datashow = JSON.parse(data);
-                        $.each(datashow, function(i, item) {
-                            $('#list_withdrawal_edit > tr').each(function() {
-                                var id = $(this).attr('id');
-                                var real_id = $(this).find('td:first input').val();
-                                if ($.isNumeric(real_id)) {
-                                    if (real_id == item.id) {
-                                        $('#records_withdrawal_' + id.replace(/[^0-9]/g, '') + '_real_hire_price').val(item.real_hire_price);
-
-                                    }
-                                }
-                            });
-                            $('#list_withdrawal > tr').each(function() {
-                                var id = $(this).attr('id');
-                                var real_id = $(this).find('td:first input').val();
-                                if ($.isNumeric(real_id)) {
-                                    if (real_id == item.id) {
-                                        $('#records_new_withdrawal_' + id.replace(/[^0-9]/g, '') + '_real_hire_price').val(item.real_hire_price);
-                                    }
-                                }
-                            });
-                        });
-                    }
-                }
-            });
-        });
         // $('#date_out').datepicker({ dateFormat: 'dd/mm/yy', changeMonth: true, changeYear: true });
         $('#date_out').datetimepicker({
             minDate: '+0d',
@@ -162,7 +105,7 @@
     <?php if (Link::getPost('records_new')) { ?>
         <?php foreach (Link::getPost('records_new') as $index => $record) { ?>
             $('#records_new_s<?php echo $index; ?>_real_code').autocomplete({
-                source: '<?php echo Link::createAdmin_current(array('cmd' => 'proInfo', 'field' => 'code', 'construction' => $record['construction'])); ?>',
+                source: '<?php echo Link::createAdmin_current(array('cmd' => 'proInfo', 'field' => 'code')); ?>',
                 minChars: 2, max: 15, width: 200, selectFirst: false,
                 select: function(event, ui) {
                     $('#records_new_s<?php echo $index; ?>_real_id').val(ui.item.id);
@@ -170,13 +113,12 @@
                     $('#records_new_s<?php echo $index; ?>_real_specs').val(ui.item.desc);
                     $('#records_new_s<?php echo $index; ?>_real_unit').val(ui.item.unit);
                     $('#records_new_s<?php echo $index; ?>_real_quantity').val(ui.item.quantity);
-                    $('#records_new_s<?php echo $index; ?>_real_hire_price').val(ui.item.real_hire_price);
                 }
             }).autocomplete("instance")._renderItem = function (ul, item) {
                 return $("<li>").append("<a>" + item.value + "<br>" + item.name + "<\/a>").appendTo(ul);
             };
             $('#records_new_s<?php echo $index; ?>_real_name').autocomplete({
-                source: '<?php echo Link::createAdmin_current(array('cmd' => 'proInfo', 'field' => 'name', 'construction' => $record['construction'])); ?>',
+                source: '<?php echo Link::createAdmin_current(array('cmd' => 'proInfo', 'field' => 'name')); ?>',
                 minChars: 2, max: 15, width: 200, selectFirst: false,
                 select: function(event, ui) {
                     $('#records_new_s<?php echo $index; ?>_real_id').val(ui.item.id);
@@ -184,7 +126,6 @@
                     $('#records_new_s<?php echo $index; ?>_real_specs').val(ui.item.desc);
                     $('#records_new_s<?php echo $index; ?>_real_unit').val(ui.item.unit);
                     $('#records_new_s<?php echo $index; ?>_real_quantity').val(ui.item.quantity);
-                    $('#records_new_s<?php echo $index; ?>_real_hire_price').val(ui.item.real_hire_price);
                 }
             }).autocomplete("instance")._renderItem = function(ul, item) {
                 return $("<li>").append("<a>" + item.value + "<br>" + item.desc + "<\/a>").appendTo(ul);
@@ -244,8 +185,7 @@
             data: {
                 cmd: 'fillinfo',
                 nameid: itemname,
-                arange: ele,
-                construction: $('#construction').val()
+                arange: ele
             },
             success: function(data) {
                 if (data) {
@@ -255,12 +195,10 @@
                     $('#records_new_' + ele + '_' + rowid + '_' + type + '_name').val(datashow.name);
                     $('#records_new_' + ele + '_' + rowid + '_' + type + '_specs').val(datashow.specification);
                     $('#records_new_' + ele + '_' + rowid + '_' + type + '_unit').val(datashow.unit);
-                    $('#records_new_' + ele + '_' + rowid + '_' + type + '_real_hire_price').val(datashow.real_hire_price);
                 }
             }
         });
     }
-    <?php if ($this->grant->check_privilege('MOD_ADMINPRODUCT|END', 'approved')) { ?>
     function changePriceAccounting(value, prokey) {
         proprice = 0;
         $('td.subtotal-' + prokey).each(function() {
@@ -271,7 +209,6 @@
         }
         $("input#records_withdrawal_" + prokey + "_real_price").val(proprice.toFixed(0));
     }
-    <?php } ?>
 </script>
 <div class="content-wrapper">
     <div class="path">
@@ -397,19 +334,11 @@
                                                 <td><input type="number" name="records_withdrawal[<?php echo $keW; ?>][real_quantity]" id="records_withdrawal_<?php echo $keW; ?>_real_quantity" value="<?php echo $veW['quantity']; ?>" autocomplete="off" /></td>
                                                 <td><input type="number" name="records_withdrawal[<?php echo $keW; ?>][real_hire_price]" id="records_withdrawal_<?php echo $keW; ?>_real_hire_price" value="<?php echo $veW['hire_price']; ?>" readOnly="true" /></td>
                                                 <td align="center">
-                                                    <?php if ($this->grant->check_privilege('MOD_ADMINPRODUCT|END', 'approved')) { ?>
                                                     <select name="records_withdrawal[<?php echo $keW; ?>][price_accounting]" id="records_withdrawal_<?php echo $keW; ?>_price_accounting" onchange="return changePriceAccounting(this.value, '<?php echo $keW; ?>');">
                                                         <option value="CAPITAL_PRICE">{{.price_accounting_capital.}}</option>
                                                         <option value="INTERNAL_COST">{{.price_accounting_local.}}</option>
                                                     </select>
                                                     <script>$("#records_withdrawal_<?php echo $keW; ?>_price_accounting").val('<?php echo $veW['price_accounting']; ?>');</script>
-                                                    <?php } else { ?>
-                                                        <?php if ($veW['price_accounting'] == 'CAPITAL_PRICE') { ?>
-                                                            {{.price_accounting_capital.}}
-                                                        <?php } else if ($veW['price_accounting'] == 'INTERNAL_COST') { ?>
-                                                            {{.price_accounting_local.}}
-                                                        <?php } ?>
-                                                    <?php } ?>
                                                 </td>
                                                 <td><input type="text" name="records_withdrawal[<?php echo $keW; ?>][real_price]" id="records_withdrawal_<?php echo $keW; ?>_real_price" value="<?php echo $veW['price']; ?>" readonly="readonly" /></td>
                                             </tr>
@@ -476,9 +405,9 @@
                                                 <td><input type="text" name="records_new_withdrawal[s<?php echo $idw; ?>][real_specs]" id="records_new_withdrawal_s<?php echo $idw; ?>_real_specs" value="<?php echo $recw['real_specs']; ?>" /></td>
                                                 <td><input type="text" name="records_new_withdrawal[s<?php echo $idw; ?>][real_unit]" id="records_new_withdrawal_s<?php echo $idw; ?>_real_unit" value="<?php echo $recw['real_unit']; ?>" /></td>
                                                 <td><input type="number" name="records_new_withdrawal[s<?php echo $idw; ?>][real_quantity]" id="records_new_withdrawal_s<?php echo $idw; ?>_real_quantity" value="<?php echo $recw['real_quantity']; ?>" autocomplete="off" /></td>
-                                                <td><input type="number" name="records_new_withdrawal[s<?php echo $idw; ?>][real_hire_price]" id="records_new_withdrawal_s<?php echo $idw; ?>_real_hire_price" value="<?php echo $recw['real_hire_price']; ?>" readOnly="true" /></td>
+                                                <td><input type="number" name="records_new_withdrawal[s<?php echo $idw; ?>][real_hire_price]" id="records_new_withdrawal_s<?php echo $idw; ?>_real_hire_price" value="<?php echo $recw['real_quantity']; ?>" /></td>
                                                 <td><select name="records_new_withdrawal[s<?php echo $idw; ?>][price_accounting]" id="records_new_withdrawal_s<?php echo $idw; ?>_price_accounting"> <option value="CAPITAL_PRICE">{{.price_accounting_capital.}}</option> <option value="INTERNAL_COST">{{.price_accounting_local.}}</option> </select></td>
-                                                <td><input type="text" name="records_new_withdrawal[s<?php echo $idw; ?>][real_price]" id="records_new_withdrawal_s<?php echo $idw; ?>_real_price" value="<?php echo $recw['real_price']; ?>" readonly="readonly" /></td>
+                                                        <td><input type="text" name="records_new_withdrawal[s<?php echo $idw; ?>][real_price]" id="records_new_withdrawal_s<?php echo $idw; ?>_real_price" value="<?php echo $recw['real_quantity']; ?>" readonly="readonly" /></td>
                                             </tr>
                                         <?php } ?>
                                     <?php } ?>

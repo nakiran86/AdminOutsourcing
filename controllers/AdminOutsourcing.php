@@ -1576,14 +1576,18 @@ class AdminOutsourcing extends Controller {
                                                 //                                                Khong cap nhat lai tien cong 2<br />;
                                                 $dataEndImportedUpdate['hire_price_update'] = $originCurentProList[$kW]['hire_price'];
                                             }
-                                            if ($arrMaterialPriceList[$kW] + $vW['real_hire_price'] != $originCurentProList[$kW]['price']) {
+                                            $price = $arrMaterialPriceList[$kW];
+                                            if ($vW['price_accounting'] == 'CAPITAL_PRICE') {
+                                                $price += $vW['real_hire_price'];
+                                            }
+                                            if ($price != $originCurentProList[$kW]['price']) {
                                                 $strModProAdd[$kW] .= ' - ' . 'Old price: ' . $originCurentProList[$kW]['price'] . "\n";
-                                                $strModProAdd[$kW] .= '   ' . 'New price: ' . ($arrMaterialPriceList[$kW] + $vW['real_hire_price']) . "\n";
-                                                $proOutsourcingEdit[$kW]['price'] = $arrMaterialPriceList[$kW] + $vW['real_hire_price'];
+                                                $strModProAdd[$kW] .= '   ' . 'New price: ' . $price . "\n";
+                                                $proOutsourcingEdit[$kW]['price'] = $price;
                                                 if ($originCurentProList[$kW]['quantity_import'] > 0) {
                                                     //                                                    Cap nhat lai gia thanh pham
-                                                    $strModEndImported .= ' - ' . 'Auto update price: ' . $originCurentProList[$kW]['price'] . ' -> ' . ($arrMaterialPriceList[$kW] + $vW['real_hire_price']) . "\n";
-                                                    $dataEndImportedUpdate['price_update'] = ($arrMaterialPriceList[$kW] + $vW['real_hire_price']);
+                                                    $strModEndImported .= ' - ' . 'Auto update price: ' . $originCurentProList[$kW]['price'] . ' -> ' . $price . "\n";
+                                                    $dataEndImportedUpdate['price_update'] = $price;
                                                 } else {
                                                     //                                                    Khong cap nhat lai gia thanh pham <br />;
                                                     $dataEndImportedUpdate['price_update'] = $originCurentProList[$kW]['price'];
@@ -1603,7 +1607,7 @@ class AdminOutsourcing extends Controller {
                                                 $dataUpdatePCPrice[$originCurentProList[$kW]['product_id']]['create_time'] = $endImportedList[$originCurentProList[$kW]['product_id']]['create_time'];
                                                 $dataUpdatePCPrice[$originCurentProList[$kW]['product_id']]['stockin'] = 'MAIN';
                                             }
-                                            if ($this->grant->check_privilege('MOD_ADMINPRODUCT|END', 'approved')) {
+                                            if ($vW['price_accounting'] != $originCurentProList[$kW]['price_accounting'] && $this->grant->check_privilege('MOD_ADMINPRODUCT|END', 'approved')) {
                                                 $proOutsourcingEdit[$kW]['price_accounting'] = $vW['price_accounting'];
                                                 $strModProAdd[$kW] .= ' - ' . 'Old price_accounting: ' . $originCurentProList[$kW]['price_accounting'] . "\n";
                                                 $strModProAdd[$kW] .= '   ' . 'New price_accounting: ' . $vW['price_accounting'] . "\n";

@@ -113,43 +113,47 @@
                     proIds.push(real_id);
                 }
             });
-            $.ajax({
-                url: '<?php echo Link::createAdmin_current(array('cmd' => 'showHirePrice')); ?>',
-                data: {
-                    proIds: proIds,
-                    construction: construction
-                },
-                beforeSend: function() {
-                    $('#construction').parent().append('<i class="fa fa-spinner fa-spin"></i>');
-                },
-                success: function(data) {
-                    if (data) {
+            if (proIds.length != 0) {
+                $.ajax({
+                    url: '<?php echo Link::createAdmin_current(array('cmd' => 'showHirePrice')); ?>',
+                    data: {
+                        proIds: proIds,
+                        construction: construction
+                    },
+                    beforeSend: function() {
+                        $('#construction').attr('disabled', 'disabled');
+                        $('#construction').parent().append('<i class="fa fa-spinner fa-spin"></i>');
+                        setHideItem();
+                    },
+                    success: function(data) {
+                        $('#construction').removeAttr('disabled');
                         $('#construction').parent().find('.fa').remove();
-                        datashow = JSON.parse(data);
-                        $.each(datashow, function(i, item) {
-                            $('#list_withdrawal_edit > tr').each(function() {
-                                var id = $(this).attr('id');
-                                var real_id = $(this).find('td:first input').val();
-                                if ($.isNumeric(real_id)) {
-                                    if (real_id == item.id) {
-                                        $('#records_withdrawal_' + id.replace(/[^0-9]/g, '') + '_real_hire_price').val(item.real_hire_price);
-
+                        if (data) {
+                            datashow = JSON.parse(data);
+                            $.each(datashow, function(i, item) {
+                                $('#list_withdrawal_edit > tr').each(function() {
+                                    var id = $(this).attr('id');
+                                    var real_id = $(this).find('td:first input').val();
+                                    if ($.isNumeric(real_id)) {
+                                        if (real_id == item.id) {
+                                            $('#records_withdrawal_' + id.replace(/[^0-9]/g, '') + '_real_hire_price').val(item.real_hire_price);
+                                        }
                                     }
-                                }
-                            });
-                            $('#list_withdrawal > tr').each(function() {
-                                var id = $(this).attr('id');
-                                var real_id = $(this).find('td:first input').val();
-                                if ($.isNumeric(real_id)) {
-                                    if (real_id == item.id) {
-                                        $('#records_new_withdrawal_' + id.replace(/[^0-9]/g, '') + '_real_hire_price').val(item.real_hire_price);
+                                });
+                                $('#list_withdrawal > tr').each(function() {
+                                    var id = $(this).attr('id');
+                                    var real_id = $(this).find('td:first input').val();
+                                    if ($.isNumeric(real_id)) {
+                                        if (real_id == item.id) {
+                                            $('#records_new_withdrawal_' + id.replace(/[^0-9]/g, '') + '_real_hire_price').val(item.real_hire_price);
+                                        }
                                     }
-                                }
+                                });
                             });
-                        });
+                        }
                     }
-                }
-            });
+                });
+            }
         });
         // $('#date_out').datepicker({ dateFormat: 'dd/mm/yy', changeMonth: true, changeYear: true });
         $('#date_out').datetimepicker({

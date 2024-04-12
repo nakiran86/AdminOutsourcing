@@ -138,6 +138,8 @@
                                         if (real_id == item.id) {
                                             $('#records_withdrawal_' + id.replace(/[^0-9]/g, '') + '_real_hire_price').val(item.real_hire_price);
                                         }
+                                        price_accounting = $('#records_withdrawal_' + id.replace(/[^0-9]/g, '') + '_price_accounting').val();
+                                        changePriceAccounting(price_accounting, id.replace(/[^0-9]/g, ''));
                                     }
                                 });
                                 $('#list_withdrawal > tr').each(function() {
@@ -147,6 +149,8 @@
                                         if (real_id == item.id) {
                                             $('#records_new_withdrawal_' + id.replace(/[^0-9]/g, '') + '_real_hire_price').val(item.real_hire_price);
                                         }
+                                        price_accounting = $('#records_new_withdrawal_' + id.replace(/[^0-9]/g, '') + '_price_accounting').val();
+                                        changePriceAccounting(price_accounting, id.replace(/[^0-9]/g, ''));
                                     }
                                 });
                             });
@@ -273,7 +277,7 @@
         if (value == 'CAPITAL_PRICE') {
             proprice += Number($("input#records_withdrawal_" + prokey + "_real_hire_price").val());
         }
-        $("input#records_withdrawal_" + prokey + "_real_price").val(proprice.toFixed(0));
+        $("input#records_withdrawal_" + prokey + "_real_price").val(proprice.toFixed(1));
     }
     <?php } ?>
 </script>

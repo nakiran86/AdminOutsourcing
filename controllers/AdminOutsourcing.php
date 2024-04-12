@@ -1534,11 +1534,11 @@ class AdminOutsourcing extends Controller {
                                             $this->model->editSave('tbl_outsourcing_product', $outSourcingDel);
                                         }
                                     }
-                                    if ($proMaterialDel && $curItem['status'] == 'APPROVED') {
+                                    // if ($proMaterialDel && $curItem['status'] == 'APPROVED') {
                                         foreach ($proMaterialDel as $materialDel) {
                                             $this->model->editSave('tbl_processed_materials', $materialDel);
                                         }
-                                    }
+                                    // }
                                     $dataUpdatePCPrice = array();
                                     if ($proList) {
                                         $proOutsourcingEdit = array();
@@ -1972,21 +1972,74 @@ class AdminOutsourcing extends Controller {
             Link::accessDenied();
         }
         Page::$title = $this->view->renderLabel('outsourcing_order_statistics');
+        $allUserList = $this->model->getUserList();
+        $this->view->userList = array_filter($allUserList, function ($value) {
+            return $value['department'] != "DELETED" &&  $value['block'] == 0 && $value['department'] == $this->view->renderLabel('customer_care_department');
+        });
         // $this->view->subMenuList = $this->category->getCategoryList('tbl_admin_menu.parent_id = "11"');
         $cond = '';
-        if (Link::get('cbMonth') && Link::get('cbYear')) {
-            $yearMonth = Link::get('cbYear') . (Link::get('cbMonth') > 9 ? Link::get('cbMonth') : '0' . Link::get('cbMonth'));
-        } else {
-            $yearMonth = date('Ym');
+        if (Link::get('cbChooseDay') == 'day' || Link::get('cbChooseDay') == 'month' || empty(Link::get('cbChooseDay'))) {
+            if (Link::get('cbChooseDay') == 'day') {
+                if (Link::get('from_date') && Link::get('to_date')) {
+                    $fromDate = Link::get('from_date');
+                    $fromDateTime = DateTime::createFromFormat('d/m/Y', $fromDate);
+                    $fromDateSql = $fromDateTime->format('Y-m-d');
+                    $toDate = Link::get('to_date');
+                    $toDateTime = DateTime::createFromFormat('d/m/Y', $toDate);
+                    $toDateSql = $toDateTime->format('Y-m-d');
+                    $cond .= ' AND DATE_FORMAT(`tbl_outsourcing`.`date_out`, "%Y-%m-%d") BETWEEN "' . $fromDateSql . '" AND  "' . $toDateSql . '"';
+                }
+            } else {
+                $year = Link::getGet('cbYear', date('Y'));
+                $month = Link::getGet('cbMonth', date('n'));
+                $yearMonth = $year . str_pad($month, 2, '0', STR_PAD_LEFT);
+                $cond .= ' AND DATE_FORMAT(`tbl_outsourcing`.`date_out`, "%Y%m") = "' . $yearMonth . '"';
+            }
         }
-        $cond .= ' AND DATE_FORMAT(tbl_outsourcing.date_out,"%Y%m") = "' . $yearMonth . '"';
+        if (Link::get('cbDateExpired') == 'day' || Link::get('cbDateExpired') == 'month') {
+            if (Link::get('cbDateExpired') == 'day') {
+                if (Link::get('from_date_expired') && Link::get('to_date_expired')) {
+                    $fromDateExpired = Link::get('from_date_expired');
+                    $fromDateExpiredObj = DateTime::createFromFormat('d/m/Y', $fromDateExpired);
+                    $fromDateExpiredSql = $fromDateExpiredObj->format('Y-m-d');
+                    $toDateExpired = Link::get('to_date_expired');
+                    $toDateExpiredObj = DateTime::createFromFormat('d/m/Y', $toDateExpired);
+                    $toDateExpiredSql = $toDateExpiredObj->format('Y-m-d');
+                    $cond .= ' AND DATE_FORMAT(`tbl_outsourcing`.`expired_date`, "%Y-%m-%d") BETWEEN "' . $fromDateExpiredSql . '" AND "' . $toDateExpiredSql . '"';
+                }
+            } else {
+                $yearExpired = Link::getGet('cbYearExpired', date('Y'));
+                $monthExpired = Link::getGet('cbMonthExpired', date('n'));
+                $yearMonthExpired = $yearExpired . str_pad($monthExpired, 2, '0', STR_PAD_LEFT);
+                $cond .= ' AND DATE_FORMAT(`tbl_outsourcing`.`expired_date`, "%Y%m") = "' . $yearMonthExpired . '"';
+            }
+        }
+        if (Link::get('order_status')) {
+            $cond .= ' AND `tbl_outsourcing`.`order_status` = "' . Link::get('order_status') . '"';
+        }
+        if (Link::get('cbUser')) {
+            $cond .= ' AND `tbl_outsourcing`.`user_create_id` LIKE "%' . Link::get('cbUser') . '%"';
+        }
         $this->view->itemsList = array();
         $getStatisticOutsourcing = $this->model->getStatisticOutsourcing($cond);
         $countDayBz = new BusinessTimeCalc();
-        $total = $orderOnTime = $orderDelayed = $dayDelay = 0;
-        $outsourceIdList = $ontimeIdList = $delayIdList = '';
         foreach ($getStatisticOutsourcing as $key => $value) {
-            $total++;
+            $this->view->itemsList[$value['user_create_id']]['fullname'] = $allUserList[$value['user_create_id']]['fullname'];
+            if (empty($this->view->itemsList[$value['user_create_id']]['order_on_time'])) {
+                $this->view->itemsList[$value['user_create_id']]['order_on_time'] = 0;
+            }
+            if (empty($this->view->itemsList[$value['user_create_id']]['order_delayed'])) {
+                $this->view->itemsList[$value['user_create_id']]['order_delayed'] = 0;
+            }
+            if (empty($this->view->itemsList[$value['user_create_id']]['total'])) {
+                $this->view->itemsList[$value['user_create_id']]['total'] = 0;
+            }
+            if (empty($this->view->itemsList[$value['user_create_id']]['day_delay'])) {
+                $this->view->itemsList[$value['user_create_id']]['day_delay'] = 0;
+            }
+            if (empty($this->view->itemsList[$value['user_create_id']]['no_finish'])) {
+                $this->view->itemsList[$value['user_create_id']]['no_finish'] = 0;
+            }
             if (empty($outsourceIdList)) {
                 $outsourceIdList = $key;
             } else {
@@ -1994,43 +2047,52 @@ class AdminOutsourcing extends Controller {
             }
             if ($value['status'] == 'FINISHED') {
                 if ($value['time_finished'] <= $value['expired_date']) {
-                    $orderOnTime++;
-                    if (empty($ontimeIdList)) {
-                        $ontimeIdList = $key;
+                    $this->view->itemsList[$value['user_create_id']]['order_on_time']++;
+                    if (empty($this->view->itemsList[$value['user_create_id']]['ontime_id_list'])) {
+                        $this->view->itemsList[$value['user_create_id']]['ontime_id_list'] = $key;
                     } else {
-                        $ontimeIdList .= ', ' . $key;
+                        $this->view->itemsList[$value['user_create_id']]['ontime_id_list'] .= ', ' . $key;
                     }
                 } else {
-                    $orderDelayed++;
-                    if (empty($delayIdList)) {
-                        $delayIdList = $key;
+                    $this->view->itemsList[$value['user_create_id']]['order_delayed']++;
+                    if (empty($this->view->itemsList[$value['user_create_id']]['delay_id_list'])) {
+                        $this->view->itemsList[$value['user_create_id']]['delay_id_list'] = $key;
                     } else {
-                        $delayIdList .= ', ' . $key;
+                        $this->view->itemsList[$value['user_create_id']]['delay_id_list'] .= ', ' . $key;
                     }
-                    $dayDelay += $countDayBz->countDayWorking(Systems::displayVnDate($value['expired_date']), date('d/m/Y'), true);
+                    $dayDelay = $countDayBz->countDayWorking(Systems::displayVnDate($value['expired_date']), date('d/m/Y'), true);
+                    $this->view->itemsList[$value['user_create_id']]['day_delay'] += $dayDelay;
                 }
             } else {
                 if ($value['expired_date'] < date('Y-m-d')) {
-                    $orderDelayed++;
-                    if (empty($delayIdList)) {
-                        $delayIdList = $key;
+                    $this->view->itemsList[$value['user_create_id']]['order_delayed']++;
+                    if (empty($this->view->itemsList[$value['user_create_id']]['delay_id_list'])) {
+                        $this->view->itemsList[$value['user_create_id']]['delay_id_list'] = $key;
                     } else {
-                        $delayIdList .= ', ' . $key;
+                        $this->view->itemsList[$value['user_create_id']]['delay_id_list'] .= ', ' . $key;
                     }
-                    $dayDelay += $countDayBz->countDayWorking(Systems::displayVnDate($value['expired_date']), date('d/m/Y'), true);
+                    $dayDelay = $countDayBz->countDayWorking(Systems::displayVnDate($value['expired_date']), date('d/m/Y'), true);
+                    $this->view->itemsList[$value['user_create_id']]['day_delay'] += $dayDelay;
+                } else {
+                    $this->view->itemsList[$value['user_create_id']]['no_finish']++;
+                    if (empty($this->view->itemsList[$value['user_create_id']]['no_finish_id_list'])) {
+                        $this->view->itemsList[$value['user_create_id']]['no_finish_id_list'] = $key;
+                    } else {
+                        $this->view->itemsList[$value['user_create_id']]['no_finish_id_list'] .= ', ' . $key;
+                    }
                 }
             }
+            $this->view->itemsList[$value['user_create_id']]['total']++;
+            if (empty($this->view->itemsList[$value['user_create_id']]['outsource_id_list'])) {
+                $this->view->itemsList[$value['user_create_id']]['outsource_id_list'] = $key;
+            } else {
+                $this->view->itemsList[$value['user_create_id']]['outsource_id_list'] .= ', ' . $key;
+            }
         }
-        $this->view->itemsList['total'] = $total;
-        $this->view->itemsList['outsource_id_list'] = $outsourceIdList;
-        $this->view->itemsList['order_on_time'] = $orderOnTime;
-        $this->view->itemsList['ontime_id_list'] = $ontimeIdList;
-        $this->view->itemsList['order_delayed'] = $orderDelayed;
-        $this->view->itemsList['day_delay'] = $dayDelay - 1;
-        $this->view->itemsList['delay_id_list'] = $delayIdList;
         $content = $this->view->render('adminoutsourcing/statistic_outsourcing', array(
             'subMenuList' => $this->view->subMenuList,
-            'itemsList' => $this->view->itemsList
+            'itemsList' => $this->view->itemsList,
+            'userList' => $this->view->userList
         ), 'plugins/AdminOutsourcing/');
         return $content;
     }
@@ -2073,21 +2135,25 @@ class AdminOutsourcing extends Controller {
         $index = 1;
         foreach ($this->view->productList as $key => $value) {
             $this->view->productList[$key]['index'] = $start + $index;
+            $this->view->productList[$key]['production_norms_list'] = array();
             if ($value['production_norms']) {
-                $this->view->productList[$key]['production_norms_list'] = array();
                 $stringProductionNormsList = explode("\n", $value['production_norms']);
                 foreach ($stringProductionNormsList as $kn => $productionNormsList) {
                     $stringNormsList = explode('|', $productionNormsList);
                     $this->view->productList[$key]['production_norms_list'][$kn]['pro_id'] = $stringNormsList[0];
                     if (isset($this->_allProduct[$stringNormsList[0]])) {
                         $this->view->productList[$key]['production_norms_list'][$kn]['pro_code'] = $this->_allProduct[$stringNormsList[0]]['code'];
+                        $this->view->productList[$key]['production_norms_list'][$kn]['pro_name'] = $this->_allProduct[$stringNormsList[0]]['name'];
+                        $this->view->productList[$key]['production_norms_list'][$kn]['pro_specification'] = $this->_allProduct[$stringNormsList[0]]['specification'];
+                        $this->view->productList[$key]['production_norms_list'][$kn]['pro_unit'] = $this->_allProduct[$stringNormsList[0]]['unit'];
                     } else {
                         $this->view->productList[$key]['production_norms_list'][$kn]['pro_code'] = $stringNormsList[0];
+                        $this->view->productList[$key]['production_norms_list'][$kn]['pro_name'] = '';
+                        $this->view->productList[$key]['production_norms_list'][$kn]['pro_specification'] = '';
+                        $this->view->productList[$key]['production_norms_list'][$kn]['pro_unit'] = '';
                     }
                     $this->view->productList[$key]['production_norms_list'][$kn]['pro_norms'] = $stringNormsList[1];
                 }
-            } else {
-                $this->view->productList[$key]['production_norms_list'] = array();
             }
             $index++;
         }

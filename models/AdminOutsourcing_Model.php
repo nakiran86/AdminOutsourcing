@@ -140,6 +140,7 @@ class AdminOutsourcing_Model extends Model {
                 tbl_user.fullname,
                 tbl_user.department,
                 tbl_user.`status`,
+                tbl_user.`block`,
                 tbl_user.`group`
             FROM
                 tbl_user
@@ -612,8 +613,10 @@ class AdminOutsourcing_Model extends Model {
         return $this->db->selectAll('
             SELECT
                 tbl_outsourcing.id,
+                tbl_outsourcing.user_create_id,
                 tbl_outsourcing.date_out,
                 tbl_outsourcing.expired_date,
+                tbl_outsourcing.date_import,
                 tbl_outsourcing.time_finished,
                 tbl_outsourcing.`status`
             FROM

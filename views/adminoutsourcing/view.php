@@ -195,7 +195,7 @@
                                 <td><?php echo $this->item['construction_label']; ?></td>
                             </tr>
                             <tr>
-                                <td class="key">{{.order_status.}}</td>
+                                <td class="key">{{.classify.}}</td>
                                 <td><?php echo $this->item['order_status_label']; ?></td>
                             </tr>
                             <tr>

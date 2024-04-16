@@ -585,7 +585,7 @@ class AdminOutsourcing extends Controller {
         $construction = Link::get('construction');
         $arrdata = array();
         if ($keyword) {
-            $cond = ' AND tbl_product.code LIKE "%' . trim($keyword) . '%"';
+            $cond = ' AND tbl_product.code LIKE "%' . trim($keyword) . '%" AND tbl_product.approve_norms = "APPROVED"';
             $allProduct = $this->model->getListProduct($cond);
             foreach ($allProduct as $product) {
                 if ($product['code'] == strtoupper($keyword)) {
@@ -1134,7 +1134,7 @@ class AdminOutsourcing extends Controller {
                         }
                         if ($flagCheck) {
                             if ($proList) {
-                                $productNormsInfoList = $this->model->getProductNormsInfo(' AND tbl_product.id IN ("' . implode('","', $arrProductIdList) . '")');
+                                $productNormsInfoList = $this->model->getProductNormsInfo(' AND tbl_product.id IN ("' . implode('","', $arrProductIdList) . '") AND tbl_product.approve_norms = "APPROVED"');
                                 $stock_id = $this->model->create('tbl_outsourcing', $dataCusInfo);
                                 $outProId = array();
                                 $proInsData = array();
@@ -1232,7 +1232,7 @@ class AdminOutsourcing extends Controller {
     private function _setOrderStatus($dateOut) {
         $bCal = new BusinessTimeCalc();
         $curDate = new DateTime();
-        $workingTime = $bCal->calcBusinessMinute($dateOut, $curDate) / 60;
+        $workingTime = $bCal->calcBusinessMinute($curDate, $dateOut) / 60;
         if ($workingTime <= 4) {
             return 'SUPPER_URGENT';
         } else if ($workingTime > 4 && $workingTime <= 16) {
@@ -1459,7 +1459,7 @@ class AdminOutsourcing extends Controller {
                                     }
                                 }
                             }
-                            $productNormsInfoList = $this->model->getProductNormsInfo(' AND tbl_product.id IN ("' . implode('","', $arrProductIdList) . '")');
+                            $productNormsInfoList = $this->model->getProductNormsInfo(' AND tbl_product.id IN ("' . implode('","', $arrProductIdList) . '") AND tbl_product.approve_norms = "APPROVED"');
                             if ($proMaterialNewList) {
                                 foreach ($proMaterialNewList as $proOSKeyNew => $newMaterial) {
                                     foreach ($newMaterial as $kmn => $promn) {
@@ -2136,6 +2136,10 @@ class AdminOutsourcing extends Controller {
         foreach ($this->view->productList as $key => $value) {
             $this->view->productList[$key]['index'] = $start + $index;
             $this->view->productList[$key]['production_norms_list'] = array();
+            $this->view->productList[$key]['approve_norms_label'] = '';
+            if ($value['approve_norms']) {
+                $this->view->productList[$key]['approve_norms_label'] = $this->view->renderLabel(strtolower($value['approve_norms']));
+            }
             if ($value['production_norms']) {
                 $stringProductionNormsList = explode("\n", $value['production_norms']);
                 foreach ($stringProductionNormsList as $kn => $productionNormsList) {
@@ -2391,6 +2395,31 @@ class AdminOutsourcing extends Controller {
         }
         echo json_encode($arrdata);
         exit;
+    }
+
+    /**
+     * Summary of approvedNorms
+     * @param mixed $id
+     * @return void
+     */
+    public function approvedNorms($id, $status) {
+        if (!$this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'approved') && $this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'admin')) {
+            Link::accessDenied();
+        }
+        if (is_numeric($id)) {
+            $currentItem = $this->model->itemProduct($id, ' AND tbl_product.approve_norms = ""');
+            if ($currentItem) {
+                $strLog = $currentItem['log'];
+                $strLog .= ' * Date: ' . date('d/m/Y H:i:s') . ":\n";
+                $strLog .= " - approve_norms: " . $status . "\n";
+                $strLog .= ' - User: ' . Session::get('user_fullname') . ' - ' . Session::get('user_id') . "\n";
+                $dataUpdate['id'] = $id;
+                $dataUpdate['approve_norms'] = $status;
+                $dataUpdate['log'] = $strLog;
+                $this->model->editSave('tbl_product', $dataUpdate);
+            }
+        }
+        Link::redirectAdminCurrent(array('cmd' => 'list_product'));
     }
 
 }

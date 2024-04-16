@@ -636,6 +636,7 @@ class AdminOutsourcing_Model extends Model {
                 tbl_product.specification,
                 tbl_product.unit,
                 tbl_product.production_norms,
+                tbl_product.approve_norms,
                 tbl_product.quantity,
                 tbl_product.price,
                 tbl_product.category_id,
@@ -683,6 +684,27 @@ class AdminOutsourcing_Model extends Model {
                 tbl_product
             WHERE
                 tbl_product.id = "' . $id . '"' . $extra_cond . '
+            LIMIT
+                0, 1
+        ');
+    }
+
+    /**
+     * Summary of itemProduct
+     * @param mixed $cond
+     * @return array
+     */
+    public function itemProduct($id, $extra_cond) {
+        return $this->db->selectOne('
+            SELECT
+                tbl_product.id,
+                tbl_product.production_norms,
+                tbl_product.approve_norms,
+                tbl_product.log
+            FROM
+                tbl_product
+            WHERE
+                tbl_product.`id` = "' . $id . '"' . $extra_cond . '
             LIMIT
                 0, 1
         ');

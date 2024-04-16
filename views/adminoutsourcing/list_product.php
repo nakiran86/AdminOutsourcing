@@ -323,6 +323,7 @@ $(document).ready(function(){
                             <th class="col_200">{{.col_specification.}}</th>
                             <th class="col_50">{{.product_unit.}}</th>
                             <th class="col_100">{{.production_norms.}}</th>
+                            <th class="col_100">{{.approved_norms.}}</th>
                             <th class="col_100">{{.overtime_labor_cost.}}</th>
                             <th class="col_100">{{.regular_labor_cost.}}</th>
                             <th class="col_80">&nbsp;</th>
@@ -346,6 +347,7 @@ $(document).ready(function(){
                                 </table>
                                 <?php } else { ?><a href="javascript:void(0);" onclick="selectpronorm('<?php echo $value['id']; ?>');">{{.not_yet_set.}}</a><?php } ?></div>
                             </td>
+                            <td class="col_center"><?php echo $value['approve_norms_label'];?></td>
                             <td class="col_right"><div id="overtime_cost_<?php echo $value['id']; ?>"><?php echo $value['overtime_cost'];?></div></td>
                             <td class="col_right"><div id="regular_cost_<?php echo $value['id']; ?>"><?php echo $value['regular_cost'];?></div></td>
                             <td align="center">
@@ -353,7 +355,14 @@ $(document).ready(function(){
                                 <input name="records_<?php echo $value['id']; ?>_edit_mode" type="hidden" id="records_<?php echo $value['id']; ?>_edit_mode" value="1" />
                                 <a href="javascript:void(0);" class="list-button" onclick="edit_row('<?php echo $value['id'];?>'); return false;">{{.edit.}}</a>
                                 <a href="<?php echo Link::createAdmin_current(array('cmd' => 'deleteProduct', 'id' => $value['id'])); ?>" onclick="javascript:return confirm('{{.are_you_sure_want_to_delete_this_news.}}');" class="list-button">{{.delete.}}</a>
-                                <?php } ?>
+                                <?php }
+                                if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'approved') && $this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'admin')) {
+                                    if ($value['approve_norms'] == 'APPROVED') { ?>
+                                        <a href="<?php echo Link::createAdmin_current(array('cmd' => 'approvedNorms', 'id' => $value['id'], 'approve_norms' => 'APPROVED_NO')); ?>" class="list-button text-norwap">{{.no_approve_norms.}}</a>
+                                    <?php } else { ?>
+                                        <a href="<?php echo Link::createAdmin_current(array('cmd' => 'approvedNorms', 'id' => $value['id'], 'approve_norms' => 'APPROVED')); ?>" class="list-button text-norwap">{{.approved_norms.}}</a>
+                                <?php }
+                                }?>
                             </td>
                         </tr>
                         <?php } ?>

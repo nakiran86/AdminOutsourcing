@@ -15,3 +15,5 @@ ADD COLUMN `construction` VARCHAR(20) NOT NULL DEFAULT '' COMMENT 'Thi công: Tr
 ADD COLUMN `order_status` VARCHAR(20) NULL DEFAULT '' COMMENT 'Tình trạng đơn hàng' AFTER `construction`;
 ALTER TABLE `tbl_outsourcing_product`
 ADD COLUMN `price_accounting` VARCHAR(20) NOT NULL DEFAULT '' COMMENT 'Hạch toán' AFTER `product_type`;
+ALTER TABLE `tbl_product`
+ADD COLUMN `approve_norms` CHAR(10) NOT NULL DEFAULT '' COMMENT 'Duyệt định mức' AFTER `production_norms`;

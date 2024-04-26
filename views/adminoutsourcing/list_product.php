@@ -346,6 +346,9 @@ $(document).ready(function(){
                     <tbody id="list">
                         <?php foreach ($this->productList as $key => $value) {
                             $rowSpan = count($value['production_norms_list']);
+                            if ($rowSpan == 0) {
+                                $rowSpan = 1;
+                            }
                         ?>
                         <tr id="row<?php echo $value['id']; ?>" class="<?php echo ($value['index'] % 2 == 1 ? 'row0 ' : 'row1 ') . strtolower($value['status']); ?>">
                             <td align="right" rowspan="<?php echo $rowSpan; ?>"><?php echo $value['index']; ?></td>

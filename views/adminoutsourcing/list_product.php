@@ -220,7 +220,14 @@ $(document).ready(function(){
             <table class="toolbar">
                 <tbody>
                     <tr>
-                        <?php if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'unlock')) { ?>
+                        <?php if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'approved') && $this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'admin')) { ?>
+                            <td align="center">
+                                <a href="javascript:void(0);" class="toolbar" title="{{.approved.}}" onclick="confirmCheckAction('frmAdminItemsList', 'approvedNorms', '{{.are_you_sure_want_to_approve_the_selected_items.}}');"><span class="icon-button Icon-32-Apply"></span>{{.approved.}}</a>
+                            </td>
+                            <td align="center">
+                                <a href="javascript:void(0);" class="toolbar" title="{{.approved_no.}}" onclick="confirmCheckAction('frmAdminItemsList', 'noApproveNorms', '{{.are_you_sure_want_to_no_approve_norms_the_selected_items.}}');"><span class="icon-button Icon-32-Cancel"></span>{{.approved_no.}}</a>
+                            </td>
+                        <?php } if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'unlock')) { ?>
                             <td align="center">
                                 <a href="javascript:void(0);" id="add_row" class="toolbar" title="{{.add_new.}}"><span class="icon-button Icon-32-Add" title="{{.add_new.}}"></span>{{.add_new.}}</a>
                             </td>
@@ -316,55 +323,70 @@ $(document).ready(function(){
                 <table cellspacing="0" border="1" class="adminlist">
                     <thead>
                         <tr>
-                            <th class="col_20"><a href="<?php echo (Link::get('orid') == 'desc' ? Link::createAdmin_current(array('orid' => 'asc')) : Link::createAdmin_current(array('orid' => 'desc')));?>">#</a></th>
-                            <th class="col_25"><input type="checkbox" onclick="javascript:SelectAllCheckboxes(this);" name="chkAll" id="chkAll"></th>
+                            <th class="col_20" rowspan="2"><a href="<?php echo (Link::get('orid') == 'desc' ? Link::createAdmin_current(array('orid' => 'asc')) : Link::createAdmin_current(array('orid' => 'desc'))); ?>">#</a></th>
+                            <th class="col_25" rowspan="2"><input type="checkbox" onclick="javascript:SelectAllCheckboxes(this);" name="chkAll" id="chkAll"></th>
+                            <th class="col_60" rowspan="2">{{.col_code.}}</th>
+                            <th class="col_250" rowspan="2">{{.col_name.}}</th>
+                            <th class="col_200" rowspan="2">{{.col_specification.}}</th>
+                            <th class="col_50" rowspan="2">{{.product_unit.}}</th>
+                            <th class="col_200" colspan="5">{{.production_norms.}}</th>
+                            <th class="col_100" rowspan="2">{{.approved_norms.}}</th>
+                            <th class="col_100" rowspan="2">{{.overtime_labor_cost.}}</th>
+                            <th class="col_100" rowspan="2">{{.regular_labor_cost.}}</th>
+                            <th class="col_80" rowspan="2">&nbsp;</th>
+                        </tr>
+                        <tr>
                             <th class="col_60">{{.col_code.}}</th>
-                            <th class="col_250">{{.col_name.}}</th>
-                            <th class="col_200">{{.col_specification.}}</th>
-                            <th class="col_50">{{.product_unit.}}</th>
-                            <th class="col_100">{{.production_norms.}}</th>
-                            <th class="col_100">{{.approved_norms.}}</th>
-                            <th class="col_100">{{.overtime_labor_cost.}}</th>
-                            <th class="col_100">{{.regular_labor_cost.}}</th>
-                            <th class="col_80">&nbsp;</th>
+                            <th class="col_120">{{.col_name.}}</th>
+                            <th class="col_150">{{.product_specification.}}</th>
+                            <th class="col_50">{{.col_unit.}}</th>
+                            <th class="col_60">{{.col_gross_weight.}}</th>
                         </tr>
                     </thead>
                     <tbody id="list">
-                        <?php foreach ($this->productList as $key => $value) { ?>
+                        <?php foreach ($this->productList as $key => $value) {
+                            $rowSpan = count($value['production_norms_list']);
+                        ?>
                         <tr id="row<?php echo $value['id']; ?>" class="<?php echo ($value['index'] % 2 == 1 ? 'row0 ' : 'row1 ') . strtolower($value['status']); ?>">
-                            <td align="right"><?php echo $value['index']; ?></td>
-                            <td align="center"><input type="checkbox" name="chkid[]" value="<?php echo $value['id']; ?>" /></td>
-                            <td class="col_center"><?php echo $value['code']; ?></td>
-                            <td><?php echo $value['name']; ?></td>
-                            <td><?php echo $value['specification']; ?></td>
-                            <td class="col_center"><?php echo $value['unit']; ?></td>
-                            <td class="col_left">
-                                <div id="production-norms<?php echo $value['id']; ?>"><?php if ($value['production_norms_list']) { ?>
-                                <table cellpadding="0" cellspacing="0" class="sub-table">
-                                    <?php foreach ($value['production_norms_list'] as $pronorms) { ?>
-                                    <tr><td class="col_left"><a href="javascript:void(0);" onclick="selectpronorm('<?php echo $value['id']; ?>');"><?php echo $pronorms['pro_code']; ?></a></td><td class="col_right"><?php echo $pronorms['pro_norms']; ?></td></tr>
-                                    <?php } ?>
-                                </table>
-                                <?php } else { ?><a href="javascript:void(0);" onclick="selectpronorm('<?php echo $value['id']; ?>');">{{.not_yet_set.}}</a><?php } ?></div>
-                            </td>
-                            <td class="col_center"><?php echo $value['approve_norms_label'];?></td>
-                            <td class="col_right"><div id="overtime_cost_<?php echo $value['id']; ?>"><?php echo $value['overtime_cost'];?></div></td>
-                            <td class="col_right"><div id="regular_cost_<?php echo $value['id']; ?>"><?php echo $value['regular_cost'];?></div></td>
-                            <td align="center">
+                            <td align="right" rowspan="<?php echo $rowSpan; ?>"><?php echo $value['index']; ?></td>
+                            <td align="center" rowspan="<?php echo $rowSpan; ?>"><input type="checkbox" name="chkid[]" value="<?php echo $value['id']; ?>" /></td>
+                            <td class="col_center" rowspan="<?php echo $rowSpan; ?>"><?php echo $value['code']; ?></td>
+                            <td rowspan="<?php echo $rowSpan; ?>"><?php echo $value['name']; ?></td>
+                            <td rowspan="<?php echo $rowSpan; ?>"><?php echo $value['specification']; ?></td>
+                            <td class="col_center" rowspan="<?php echo $rowSpan; ?>"><?php echo $value['unit']; ?></td>
+                            <?php if ($value['production_norms_list']) { ?>
+                                    <td class="col_left"><a href="javascript:void(0);" onclick="selectpronorm('<?php echo $value['id']; ?>');"><?php echo $value['production_norms_list'][0]['pro_code']; ?></a></td>
+                                    <td><?php echo $value['production_norms_list'][0]['pro_name']; ?></td>
+                                    <td><?php echo $value['production_norms_list'][0]['pro_specification']; ?></td>
+                                    <td class="col_center"><?php echo $value['production_norms_list'][0]['pro_unit']; ?></td>
+                                    <td class="col_right"><?php echo $value['production_norms_list'][0]['pro_norms']; ?></td>
+                            <?php } else { ?>
+                                <td colspan="5"><a href="javascript:void(0);" onclick="selectpronorm('<?php echo $value['id']; ?>');">{{.not_yet_set.}}</a></td>
+                            <?php } ?>
+                            <td class="col_center" rowspan="<?php echo $rowSpan; ?>"><?php echo $value['approve_norms_label'];?></td>
+                            <td class="col_right" rowspan="<?php echo $rowSpan; ?>"><div id="overtime_cost_<?php echo $value['id']; ?>"><?php echo $value['overtime_cost'];?></div></td>
+                            <td class="col_right" rowspan="<?php echo $rowSpan; ?>"><div id="regular_cost_<?php echo $value['id']; ?>"><?php echo $value['regular_cost'];?></div></td>
+                            <td align="center" rowspan="<?php echo $rowSpan; ?>">
                                 <?php if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'unlock')) { ?>
                                 <input name="records_<?php echo $value['id']; ?>_edit_mode" type="hidden" id="records_<?php echo $value['id']; ?>_edit_mode" value="1" />
                                 <a href="javascript:void(0);" class="list-button" onclick="edit_row('<?php echo $value['id'];?>'); return false;">{{.edit.}}</a>
                                 <a href="<?php echo Link::createAdmin_current(array('cmd' => 'deleteProduct', 'id' => $value['id'])); ?>" onclick="javascript:return confirm('{{.are_you_sure_want_to_delete_this_news.}}');" class="list-button">{{.delete.}}</a>
-                                <?php }
-                                if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'approved') && $this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'admin')) {
-                                    if ($value['approve_norms'] == 'APPROVED') { ?>
-                                        <a href="<?php echo Link::createAdmin_current(array('cmd' => 'approvedNorms', 'id' => $value['id'], 'approve_norms' => 'APPROVED_NO')); ?>" class="list-button text-norwap">{{.no_approve_norms.}}</a>
-                                    <?php } else { ?>
-                                        <a href="<?php echo Link::createAdmin_current(array('cmd' => 'approvedNorms', 'id' => $value['id'], 'approve_norms' => 'APPROVED')); ?>" class="list-button text-norwap">{{.approved_norms.}}</a>
-                                <?php }
-                                }?>
+                                <?php } ?>
                             </td>
                         </tr>
+                        <?php if ($value['production_norms_list']) {
+                            foreach ($value['production_norms_list'] as $key => $pronorms) {
+                                if ($key > 0) { ?>
+                            <tr>
+                                <td class="col_left"><a href="javascript:void(0);" onclick="selectpronorm('<?php echo $value['id']; ?>');"><?php echo $pronorms['pro_code']; ?></a></td>
+                                <td><?php echo $pronorms['pro_name']; ?></td>
+                                <td><?php echo $pronorms['pro_specification']; ?></td>
+                                <td class="col_center"><?php echo $pronorms['pro_unit']; ?></td>
+                                <td class="col_right"><?php echo $pronorms['pro_norms']; ?></td>
+                            </tr>
+                        <?php }
+                            }
+                        }?>
                         <?php } ?>
                     </tbody>
                 </table>
@@ -390,7 +412,14 @@ $(document).ready(function(){
             <table class="toolbar">
                 <tbody>
                     <tr>
-                        <?php if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'unlock')) { ?>
+                        <?php if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'approved') && $this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'admin')) { ?>
+                            <td align="center">
+                                <a href="javascript:void(0);" class="toolbar" title="{{.approved.}}" onclick="confirmCheckAction('frmAdminItemsList', 'approvedNorms', '{{.are_you_sure_want_to_approve_the_selected_items.}}');"><span class="icon-button Icon-32-Apply"></span>{{.approved.}}</a>
+                            </td>
+                            <td align="center">
+                                <a href="javascript:void(0);" class="toolbar" title="{{.approved_no.}}" onclick="confirmCheckAction('frmAdminItemsList', 'noApproveNorms', '{{.are_you_sure_want_to_no_approve_norms_the_selected_items.}}');"><span class="icon-button Icon-32-Cancel"></span>{{.approved_no.}}</a>
+                            </td>
+                        <?php } if ($this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'unlock')) { ?>
                             <td align="center">
                                 <a href="javascript:void(0);" id="add_row" class="toolbar" title="{{.add_new.}}"><span class="icon-button Icon-32-Add" title="{{.add_new.}}"></span>{{.add_new.}}</a>
                             </td>

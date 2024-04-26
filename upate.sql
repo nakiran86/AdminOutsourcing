@@ -17,3 +17,6 @@ ALTER TABLE `tbl_outsourcing_product`
 ADD COLUMN `price_accounting` VARCHAR(20) NOT NULL DEFAULT '' COMMENT 'Hạch toán' AFTER `product_type`;
 ALTER TABLE `tbl_product`
 ADD COLUMN `approve_norms` CHAR(10) NOT NULL DEFAULT '' COMMENT 'Duyệt định mức' AFTER `production_norms`;
+
+ALTER TABLE `tbl_product`
+CHANGE COLUMN `approve_norms` `approve_norms` CHAR(15) NOT NULL DEFAULT '' COMMENT 'Duyệt định mức';

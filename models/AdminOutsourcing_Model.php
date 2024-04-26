@@ -645,7 +645,8 @@ class AdminOutsourcing_Model extends Model {
                 tbl_product.regular_cost,
                 tbl_product.overtime_cost,
                 tbl_product.create_time,
-                tbl_product.`status`
+                tbl_product.`status`,
+                tbl_product.`log`
             FROM
                 tbl_product
             WHERE

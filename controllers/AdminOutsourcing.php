@@ -2399,27 +2399,71 @@ class AdminOutsourcing extends Controller {
 
     /**
      * Summary of approvedNorms
-     * @param mixed $id
      * @return void
      */
-    public function approvedNorms($id, $status) {
-        if (!$this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'approved') && $this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'admin')) {
+    public function approvedNorms() {
+        if (!$this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'approved') && !$this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'admin')) {
             Link::accessDenied();
         }
-        if (is_numeric($id)) {
-            $currentItem = $this->model->itemProduct($id, ' AND tbl_product.approve_norms = ""');
+        $idList = Link::get('chkid');
+        if (is_array($idList)) {
+            $extraCond = ' AND tbl_product.id IN ("' . implode('","', $idList) . '") AND tbl_product.approve_norms <> "APPROVED"';
+            $currentItem = $this->model->getListProduct($extraCond);
             if ($currentItem) {
-                $strLog = $currentItem['log'];
-                $strLog .= ' * Date: ' . date('d/m/Y H:i:s') . ":\n";
-                $strLog .= " - approve_norms: " . $status . "\n";
-                $strLog .= ' - User: ' . Session::get('user_fullname') . ' - ' . Session::get('user_id') . "\n";
-                $dataUpdate['id'] = $id;
-                $dataUpdate['approve_norms'] = $status;
-                $dataUpdate['log'] = $strLog;
-                $this->model->editSave('tbl_product', $dataUpdate);
+                $dataUpdate = array();
+                foreach ($idList as $id) {
+                    if ($currentItem[$id]) {
+                        $strLogAdd = $currentItem[$id]['log'];
+                        $strLogAdd .= ' * Date: ' . date('d/m/Y H:i:s') . ":\n";
+                        $strLogAdd .= " - Action: APPROVED NORMS" . "\n";
+                        $strLogAdd .= " - approve_norms: " . $currentItem[$id]['approve_norms'] . " -> APPROVED\n";
+                        $strLogAdd .= ' - User: ' . Session::get('user_fullname') . ' - ' . Session::get('user_id') . "\n";
+                        $dataUpdate[$id]['id'] = $id;
+                        $dataUpdate[$id]['approve_norms'] = 'APPROVED';
+                        $dataUpdate[$id]['log'] = $strLogAdd;
+                    }
+                }
+                if ($dataUpdate) {
+                    $this->model->upsertMulti('tbl_product', $dataUpdate, true);
+                }
             }
         }
         Link::redirectAdminCurrent(array('cmd' => 'list_product'));
+    }
+
+    /**
+     * Summary of noApproveNorms
+     * @return void
+     */
+    public function noApproveNorms() {
+        if (!$this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'approved') && !$this->grant->check_privilege('MOD_ADMINOUTSOURCING', 'admin')) {
+            Link::accessDenied();
+        }
+        $idList = Link::get('chkid');
+        if (is_array($idList)) {
+            $extraCond = ' AND tbl_product.id IN ("' . implode('","', $idList) . '") AND tbl_product.approve_norms <> "APPROVED_NO"';
+            $currentItem = $this->model->getListProduct($extraCond);
+            if ($currentItem) {
+                $dataUpdate = array();
+                foreach ($idList as $id) {
+                    if ($currentItem[$id]) {
+                        $strLogAdd = $currentItem[$id]['log'];
+                        $strLogAdd .= ' * Date: ' . date('d/m/Y H:i:s') . ":\n";
+                        $strLogAdd .= " - Action: NO APPROVE NORMS" . "\n";
+                        $strLogAdd .= " - approve_norms: " . $currentItem[$id]['approve_norms'] . " -> APPROVED_NO\n";
+                        $strLogAdd .= ' - User: ' . Session::get('user_fullname') . ' - ' . Session::get('user_id') . "\n";
+                        $dataUpdate[$id]['id'] = $id;
+                        $dataUpdate[$id]['approve_norms'] = 'APPROVED_NO';
+                        $dataUpdate[$id]['log'] = $strLogAdd;
+                    }
+                }
+                if ($dataUpdate) {
+                    $this->model->upsertMulti('tbl_product', $dataUpdate, true);
+                }
+            }
+        }
+        Link::redirectAdminCurrent(array('cmd' => 'list_product'));
+
     }
 
 }
